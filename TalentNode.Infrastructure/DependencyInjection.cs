@@ -18,6 +18,7 @@ namespace TalentNode.Infrastructure
             services.AddDbContext<TalentNodeDbContext>(options => { options.UseSqlServer("Server =DESKTOP-M4HOJNG;Database=TalentNode;Trusted_Connection=true; Encrypt=true; TrustServerCertificate=true;"); });
 
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IUserAuthenticationRepository, UserAuthenticationRepository>();
             return services;
         }
     }
