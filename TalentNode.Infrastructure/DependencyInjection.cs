@@ -18,6 +18,7 @@ namespace TalentNode.Infrastructure
             services.AddDbContext<TalentNodeDbContext>(options => { options.UseSqlServer("Server =SHIV\\SQLEXPRESS_2022;Database=TalentNode;Trusted_Connection=true; Encrypt=true; TrustServerCertificate=true;"); });
 
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IUserAuthenticationRepository, UserAuthenticationRepository>();
             return services;
         }
     }
