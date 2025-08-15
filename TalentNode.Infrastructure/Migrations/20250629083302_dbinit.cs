@@ -30,7 +30,7 @@ namespace TalentNode.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Employees");
+                name: "Employees"); 
         }
     }
 }
