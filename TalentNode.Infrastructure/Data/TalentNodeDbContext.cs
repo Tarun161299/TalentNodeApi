@@ -15,7 +15,7 @@ namespace TalentNode.Infrastructure.Data
         public DbSet<SkillMaster> SkillMaster { get; set; }
 
         public DbSet<StateMaster> StateMaster { get; set; }
-
+        public DbSet<Document> Document { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Composite keys

@@ -21,7 +21,8 @@ namespace TalentNode.Domain.Entities
 
         [Required, MaxLength(150)]
         public string Email { get; set; }
-
+       
+        public float Experience { get; set; }
         [MaxLength(15)]
         public string Phone { get; set; }
 
