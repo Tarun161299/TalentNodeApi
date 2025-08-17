@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using TalentNode.Domain.Entities;
 using TalentNode.Domain.interfaces;
+using TalentNode.Domain.Models;
 using TalentNode.Infrastructure.Data;
 
 namespace TalentNode.Infrastructure.Repositories
@@ -26,5 +27,34 @@ namespace TalentNode.Infrastructure.Repositories
             return EmployeEntity;
 
         }
+        public async Task<List<Get_All_Employee_Data>> Get_All_Employee_Data()
+        {
+            var employeeDetails = (from e in dbContext.Employee
+                                   join d  in dbContext.DistrictMaster on e.EmployeeID equals d.DistrictID
+                                   join s in dbContext.StateMaster on e.StateID equals s.StateID
+                                 
+                                   select new Get_All_Employee_Data
+                                   {
+                                       EmployeeID = e.EmployeeID,
+                                       StateName = s.StateName,
+                                       DistrictName = d.DistrictName,
+                                       Experience=e.Experience,
+
+                                       Emp_Skills = (from es in dbContext.EmployeeSkill
+                                                 join sm in dbContext.SkillMaster on es.SkillID equals sm.SkillID
+                                                 where es.EmployeeID == e.EmployeeID
+                                                 select new Skills { SkillID= sm.SkillID,
+                                                 SkillName= sm.SkillName,
+                                                 }).ToList(),
+
+                                       Emp_Qualification = (from eq in dbContext.EmployeeQualification
+                                                         join qm in dbContext.QualificationMaster on eq.QualificationID equals qm.QualificationID
+                                                         where eq.EmployeeID == e.EmployeeID
+                                                         select new Qualification { QualificationId=eq.QualificationID, QualificationName=qm.QualificationName }).ToList()
+                                   }).ToList();
+            return employeeDetails;
+
+        }
+
     }
 }

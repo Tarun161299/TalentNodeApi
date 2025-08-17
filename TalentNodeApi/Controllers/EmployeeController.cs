@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TalentNode.Application.command;
 using TalentNode.Domain.Entities;
+using TalentNode.Domain.Models;
 
 namespace TalentNodeApi.Controllers
 {
@@ -15,6 +16,13 @@ namespace TalentNodeApi.Controllers
         {
             var result = await sender.Send(new AddEmployeeCommand(employee));
             return Ok();
+        }
+
+        [HttpGet("Get_All_Employee_Data")]
+        public async Task<List<Get_All_Employee_Data>> GetAllEmployeAsync()
+        {
+            var result = await sender.Send(new Get_All_EmployeeCommand());
+            return result;
         }
     }
 }
