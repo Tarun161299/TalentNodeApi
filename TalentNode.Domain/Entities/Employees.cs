@@ -34,6 +34,9 @@ namespace TalentNode.Domain.Entities
         public int DistrictID { get; set; }
         public DistrictMaster District { get; set; }
 
+        public string WorkingLocation {get; set;}
+
+
         public ICollection<EmployeeQualification> Qualifications { get; set; }
         public ICollection<EmployeeSkill> Skills { get; set; }
     }

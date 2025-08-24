@@ -22,7 +22,7 @@ namespace TalentNode.Infrastructure.Repositories
         public async Task<EmployeEntity> AddEmployeeAsync(EmployeEntity EmployeEntity)
         {
             EmployeEntity.Id = Guid.NewGuid();
-              dbContext.Employees.Add(EmployeEntity);
+            dbContext.Employees.Add(EmployeEntity);
             await dbContext.SaveChangesAsync();
             return EmployeEntity;
 
@@ -30,31 +30,58 @@ namespace TalentNode.Infrastructure.Repositories
         public async Task<List<Get_All_Employee_Data>> Get_All_Employee_Data()
         {
             var employeeDetails = (from e in dbContext.Employee
-                                   join d  in dbContext.DistrictMaster on e.EmployeeID equals d.DistrictID
+                                   join d in dbContext.DistrictMaster on e.EmployeeID equals d.DistrictID
                                    join s in dbContext.StateMaster on e.StateID equals s.StateID
-                                 
+
                                    select new Get_All_Employee_Data
                                    {
                                        EmployeeID = e.EmployeeID,
                                        StateName = s.StateName,
                                        DistrictName = d.DistrictName,
-                                       Experience=e.Experience,
+                                       Experience = e.Experience,
 
                                        Emp_Skills = (from es in dbContext.EmployeeSkill
-                                                 join sm in dbContext.SkillMaster on es.SkillID equals sm.SkillID
-                                                 where es.EmployeeID == e.EmployeeID
-                                                 select new Skills { SkillID= sm.SkillID,
-                                                 SkillName= sm.SkillName,
-                                                 }).ToList(),
+                                                     join sm in dbContext.SkillMaster on es.SkillID equals sm.SkillID
+                                                     where es.EmployeeID == e.EmployeeID
+                                                     select new Skills
+                                                     {
+                                                         SkillID = sm.SkillID,
+                                                         SkillName = sm.SkillName,
+                                                     }).ToList(),
 
                                        Emp_Qualification = (from eq in dbContext.EmployeeQualification
-                                                         join qm in dbContext.QualificationMaster on eq.QualificationID equals qm.QualificationID
-                                                         where eq.EmployeeID == e.EmployeeID
-                                                         select new Qualification { QualificationId=eq.QualificationID, QualificationName=qm.QualificationName }).ToList()
+                                                            join qm in dbContext.QualificationMaster on eq.QualificationID equals qm.QualificationID
+                                                            where eq.EmployeeID == e.EmployeeID
+                                                            select new Qualification { QualificationId = eq.QualificationID, QualificationName = qm.QualificationName }).ToList()
                                    }).ToList();
             return employeeDetails;
 
         }
+        public async Task<DocumentDetails> GetDocumentByID(int EmployeeID)
+        {
+            var document = await dbContext.Document
+    .Where(d => d.EmployeeID == 1)
+    .Select(d => new DocumentDetails
+    {
+        DocumentID = d.DocumentID,
+        EmployeeID = d.EmployeeID,
+        DocName = d.DocName,
+        FileName = d.FileName,
+        FileType = d.FileType,
+        FileContentBase64 = d.FileContentBase64,
+        Link = d.Link,
+        UploadDate = d.UploadDate,
+        IsRemoved = d.IsRemoved,
+        CreatedBy = d.CreatedBy,
+        UpdatedBy = d.UpdatedBy
+    })
+    .FirstOrDefaultAsync();   // 👈 only one record
 
+            return document;
+
+
+
+
+        }
     }
 }
