@@ -39,7 +39,10 @@ namespace TalentNode.Infrastructure.Repositories
                                        StateName = s.StateName,
                                        DistrictName = d.DistrictName,
                                        Experience = e.Experience,
-
+                                       FirstName=e.FirstName,
+                                       LastName=e.LastName,
+                                       Email=e.Email,
+                                       Phone=e.Phone,
                                        Emp_Skills = (from es in dbContext.EmployeeSkill
                                                      join sm in dbContext.SkillMaster on es.SkillID equals sm.SkillID
                                                      where es.EmployeeID == e.EmployeeID
