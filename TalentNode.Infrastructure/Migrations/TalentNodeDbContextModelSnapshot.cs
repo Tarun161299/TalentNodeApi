@@ -63,9 +63,6 @@ namespace TalentNode.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int>("EmployeeID")
-                        .HasColumnType("int");
-
                     b.Property<string>("FileContentBase64")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -140,6 +137,9 @@ namespace TalentNode.Infrastructure.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<int>("EmpImageID")
+                        .HasColumnType("int");
+
                     b.Property<float>("Experience")
                         .HasColumnType("real");
 
@@ -157,6 +157,9 @@ namespace TalentNode.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
+
+                    b.Property<int>("ResumeID")
+                        .HasColumnType("int");
 
                     b.Property<int>("StateID")
                         .HasColumnType("int");

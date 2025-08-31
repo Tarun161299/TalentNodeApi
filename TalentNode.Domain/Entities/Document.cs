@@ -13,9 +13,7 @@ namespace TalentNode.Domain.Entities
         [Key]
         public int DocumentID { get; set; }      // Primary Key
 
-        [Required]
-        public int EmployeeID { get; set; }      // Foreign Key (link to Employee table)
-
+        
         [Required, MaxLength(200)]
         public string DocName { get; set; }      // e.g. "Resume", "ID Proof"
 
