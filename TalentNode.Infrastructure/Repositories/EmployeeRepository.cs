@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using TalentNode.Domain.Entities;
@@ -14,6 +15,7 @@ namespace TalentNode.Infrastructure.Repositories
 {
     public class EmployeeRepository(TalentNodeDbContext dbContext) : IEmployeeRepository
     {
+        
         public async Task<IEnumerable<EmployeEntity>> GetEmployees()
         {
             return await dbContext.Employees.ToListAsync();
@@ -43,6 +45,10 @@ namespace TalentNode.Infrastructure.Repositories
                                        LastName=e.LastName,
                                        Email=e.Email,
                                        Phone=e.Phone,
+                                       EmpImage = dbContext.Document
+                        .Where(es => es.DocumentID == e.EmpImageID)
+                        .Select(es => es.FileContentBase64)   // string or byte[]
+                        .FirstOrDefault(),
                                        Emp_Skills = (from es in dbContext.EmployeeSkill
                                                      join sm in dbContext.SkillMaster on es.SkillID equals sm.SkillID
                                                      where es.EmployeeID == e.EmployeeID
@@ -60,24 +66,28 @@ namespace TalentNode.Infrastructure.Repositories
             return employeeDetails;
 
         }
+
+
         public async Task<DocumentDetails> GetDocumentByID(int EmployeeID)
         {
-            var document = await dbContext.Document
-    .Where(d => d.EmployeeID == 1)
-    .Select(d => new DocumentDetails
-    {
-        DocumentID = d.DocumentID,
-        EmployeeID = d.EmployeeID,
-        DocName = d.DocName,
-        FileName = d.FileName,
-        FileType = d.FileType,
-        FileContentBase64 = d.FileContentBase64,
-        Link = d.Link,
-        UploadDate = d.UploadDate,
-        IsRemoved = d.IsRemoved,
-        CreatedBy = d.CreatedBy,
-        UpdatedBy = d.UpdatedBy
-    })
+            //var emplyeelist = await dbContext.Employees;
+            var document = await (from emp in dbContext.Employee
+                                  join d in dbContext.Document
+                                  on emp.ResumeID equals d.DocumentID
+                                  select new DocumentDetails
+                                  {
+                                      DocumentID = d.DocumentID,
+                                      EmployeeID = emp.EmployeeID,//d.EmployeeID,
+                                      DocName = d.DocName,
+                                      FileName = d.FileName,
+                                      FileType = d.FileType,
+                                      FileContentBase64 = d.FileContentBase64,
+                                      Link = d.Link,
+                                      UploadDate = d.UploadDate,
+                                      IsRemoved = d.IsRemoved,
+                                      CreatedBy = d.CreatedBy,
+                                      UpdatedBy = d.UpdatedBy
+                                  })
     .FirstOrDefaultAsync();   // 👈 only one record
 
             return document;

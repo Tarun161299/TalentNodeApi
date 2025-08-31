@@ -19,6 +19,8 @@ namespace TalentNode.Domain.Models
         public string DistrictName { get; set; }
         public string StateName { get; set; }
 
+        public string? EmpImage { get; set; }
+
 
     }
 }
