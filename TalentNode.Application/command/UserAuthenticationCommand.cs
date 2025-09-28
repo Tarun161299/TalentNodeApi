@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TalentNode.Domain.Entities;
+//using TalentNode.Domain.Entities;
 using TalentNode.Domain.interfaces;
 using TalentNode.Domain.Models;
 

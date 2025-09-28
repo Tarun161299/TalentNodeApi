@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TalentNode.Application.command;
-using TalentNode.Domain.Entities;
+//using TalentNode.Domain.Entities;
 using TalentNode.Domain.Models;
 
 namespace TalentNodeApi.Controllers
