@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TalentNode.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TalentNode.Infrastructure.Data;
 namespace TalentNode.Infrastructure.Migrations
 {
     [DbContext(typeof(TalentNodeDbContext))]
-    partial class TalentNodeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250928075747_290925")]
+    partial class _290925
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,34 +238,23 @@ namespace TalentNode.Infrastructure.Migrations
 
             modelBuilder.Entity("TalentNode.Domain.Entities.MdMainModule", b =>
                 {
-                    b.Property<int>("Roleid")
-                        .HasColumnType("int");
-
                     b.Property<string>("MainModuleID")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("ChildModuleIDs")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("Roleid", "MainModuleID");
+                    b.HasKey("MainModuleID");
 
                     b.ToTable("MdMainModule");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.MdRoleModule", b =>
-                {
-                    b.Property<string>("MainModuleID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ModuleID")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("MainModuleID", "ModuleID");
-
-                    b.ToTable("MdRoleModule");
                 });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.QualificationMaster", b =>
@@ -382,10 +374,10 @@ namespace TalentNode.Infrastructure.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                    b.Property<string>("RoleName")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("UserName", "RoleId");
+                    b.HasKey("UserName", "RoleName");
 
                     b.ToTable("UserRoleMapping");
                 });

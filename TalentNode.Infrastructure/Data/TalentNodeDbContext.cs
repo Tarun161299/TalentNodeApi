@@ -22,14 +22,20 @@ namespace TalentNode.Infrastructure.Data
         public DbSet<Document> Document { get; set; }
         public DbSet<MDModule> MdModule { get; set; }
         public DbSet<MdMainModule> MdMainModule { get; set; }
+        public DbSet<MdRoleModule> MdRoleModule { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<MdMainModule>()
+     .HasKey(m => new { m.Roleid, m.MainModuleID });
+            modelBuilder.Entity<MdRoleModule>()
+  .HasKey(m => new { m.MainModuleID, m.ModuleID });
+            
             // Composite keys
             modelBuilder.Entity<EmployeeQualification>()
                 .HasKey(eq => new { eq.EmployeeID, eq.QualificationID });
 
             modelBuilder.Entity<UserRoleMapping>()
-            .HasKey(ur => new { ur.UserName, ur.RoleName });
+            .HasKey(ur => new { ur.UserName, ur.RoleId });
 
             modelBuilder.Entity<EmployeeSkill>()
                 .HasKey(es => new { es.EmployeeID, es.SkillID });

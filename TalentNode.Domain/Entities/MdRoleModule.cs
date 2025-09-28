@@ -6,9 +6,15 @@ using System.Threading.Tasks;
 
 namespace TalentNode.Domain.Entities
 {
-    public class UserRoleMapping
+
+    public class MdRoleModule
     {
-        public string UserName { get; set; }
-        public int  RoleId { get; set; }
+       
+        
+        public string MainModuleID { get; set; }
+
+        public string ModuleID { get; set; }
+
+       
     }
 }
