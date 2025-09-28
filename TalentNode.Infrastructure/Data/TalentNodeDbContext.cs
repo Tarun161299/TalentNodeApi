@@ -1,10 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TalentNode.Domain.Entities;
 
+
 namespace TalentNode.Infrastructure.Data
 {
     public class TalentNodeDbContext(DbContextOptions<TalentNodeDbContext> Options):DbContext(Options)
     {
+        public DbSet<UserDetails> UserDetails { get; set; }
+        public DbSet<RoleMaster> RoleMasters { get; set; }
+        public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
         public DbSet<EmployeEntity> Employees { get; set; }
         public DbSet<DistrictMaster> DistrictMaster { get; set; }
         public DbSet<EmployeeQualification> EmployeeQualification { get; set; }
@@ -23,6 +27,9 @@ namespace TalentNode.Infrastructure.Data
             // Composite keys
             modelBuilder.Entity<EmployeeQualification>()
                 .HasKey(eq => new { eq.EmployeeID, eq.QualificationID });
+
+            modelBuilder.Entity<UserRoleMapping>()
+            .HasKey(ur => new { ur.UserName, ur.RoleName });
 
             modelBuilder.Entity<EmployeeSkill>()
                 .HasKey(es => new { es.EmployeeID, es.SkillID });
