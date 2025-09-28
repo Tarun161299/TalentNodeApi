@@ -16,6 +16,8 @@ namespace TalentNode.Infrastructure.Data
 
         public DbSet<StateMaster> StateMaster { get; set; }
         public DbSet<Document> Document { get; set; }
+        public DbSet<MDModule> MdModule { get; set; }
+        public DbSet<MdMainModule> MdMainModule { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Composite keys
