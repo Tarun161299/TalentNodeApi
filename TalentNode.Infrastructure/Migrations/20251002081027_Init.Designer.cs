@@ -12,8 +12,8 @@ using TalentNode.Infrastructure.Data;
 namespace TalentNode.Infrastructure.Migrations
 {
     [DbContext(typeof(TalentNodeDbContext))]
-    [Migration("20250928085129_290925148")]
-    partial class _290925148
+    [Migration("20251002081027_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,7 +121,7 @@ namespace TalentNode.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees");
+                    b.ToTable("SignupDetails");
                 });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.Employee", b =>
@@ -238,26 +238,34 @@ namespace TalentNode.Infrastructure.Migrations
 
             modelBuilder.Entity("TalentNode.Domain.Entities.MdMainModule", b =>
                 {
+                    b.Property<int>("Roleid")
+                        .HasColumnType("int");
+
                     b.Property<string>("MainModuleID")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("ChildModuleIDs")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("Roleid")
-                        .HasColumnType("int");
-
-                    b.HasKey("MainModuleID");
+                    b.HasKey("Roleid", "MainModuleID");
 
                     b.ToTable("MdMainModule");
+                });
+
+            modelBuilder.Entity("TalentNode.Domain.Entities.MdRoleModule", b =>
+                {
+                    b.Property<string>("MainModuleID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ModuleID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("MainModuleID", "ModuleID");
+
+                    b.ToTable("MdRoleModule");
                 });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.QualificationMaster", b =>

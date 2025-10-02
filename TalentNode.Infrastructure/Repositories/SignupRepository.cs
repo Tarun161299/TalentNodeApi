@@ -28,10 +28,14 @@ namespace TalentNode.Infrastructure.Repositories
             userDetails.Updated_On = DateTime.Now;
 
             TalentNode.Domain.Entities.UserRoleMapping userRoleMapping = new TalentNode.Domain.Entities.UserRoleMapping();
-            userRoleMapping.UserName = signup.Name;
-            userRoleMapping.RoleName = signup.Name;
+           
+            dbContext.UserDetails.Add(userDetails);
+            dbContext.SaveChanges();
+            userRoleMapping.UserName = userDetails.UserID.ToString();
+            userRoleMapping.RoleId = 4;
+            dbContext.UserRoleMapping.Add(userRoleMapping);
 
-            return 0;
+            return  dbContext.SaveChanges(); 
         }
     }
 }

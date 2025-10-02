@@ -6,13 +6,23 @@ using TalentNode.Domain.Models;
 
 namespace TalentNodeApi.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class SignupController(ISender sender) : ControllerBase
     {
         [HttpPost("SaveSignup")]
-        public async Task<IActionResult> SignupAsync([FromBody] SignupDetailsModel user)
+        public async Task<int> SignupAsync([FromBody] SignupDetailsModel user)
         {
-            var result = await sender.Send(new SignupCommand(user));
-            return Ok();
+            try
+            {
+                int result = await sender.Send(new SignupCommand(user));
+                return result;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
     }
