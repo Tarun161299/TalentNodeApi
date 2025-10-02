@@ -18,13 +18,13 @@ namespace TalentNode.Infrastructure.Repositories
         
         public async Task<IEnumerable<EmployeEntity>> GetEmployees()
         {
-            return await dbContext.Employees.ToListAsync();
+            return await dbContext.SignupDetails.ToListAsync();
         }
 
         public async Task<EmployeEntity> AddEmployeeAsync(EmployeEntity EmployeEntity)
         {
             EmployeEntity.Id = Guid.NewGuid();
-            dbContext.Employees.Add(EmployeEntity);
+            dbContext.SignupDetails.Add(EmployeEntity);
             await dbContext.SaveChangesAsync();
             return EmployeEntity;
 
