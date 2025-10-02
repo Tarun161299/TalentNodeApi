@@ -9,7 +9,7 @@ namespace TalentNode.Domain.Entities
 {
     public class MdMainModule
     {
-        [Key]
+        [Required]
         [StringLength(10)]
         public string MainModuleID { get; set; }   // e.g. "MM001"
 
@@ -17,8 +17,10 @@ namespace TalentNode.Domain.Entities
         [StringLength(100)]
         public string Description { get; set; }
 
+        [Required]
+        public int Roleid { get; set; }
+
         // store child module IDs as plain text (comma separated or single ID)
-        [StringLength(200)]
-        public string ChildModuleIDs { get; set; }  // Example: "M001,M002,M003"
+        
     }
 }

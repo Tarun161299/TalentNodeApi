@@ -14,6 +14,7 @@ namespace TalentNode.Infrastructure
 
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IUserAuthenticationRepository, UserAuthenticationRepository>();
+            services.AddScoped<IMdModuleRepository, ModulesByRoleRepository>();
             return services;
         }
     }
