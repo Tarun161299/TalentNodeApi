@@ -1,0 +1,29 @@
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using TalentNode.Application.command;
+using TalentNode.Domain.Entities;
+using TalentNode.Domain.Models;
+
+namespace TalentNodeApi.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class SignupController(ISender sender) : ControllerBase
+    {
+        [HttpPost("SaveSignup")]
+        public async Task<int> SignupAsync([FromBody] SignupDetailsModel user)
+        {
+            try
+            {
+                int result = await sender.Send(new SignupCommand(user));
+                return result;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+    }
+}

@@ -118,7 +118,7 @@ namespace TalentNode.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees");
+                    b.ToTable("SignupDetails");
                 });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.Employee", b =>

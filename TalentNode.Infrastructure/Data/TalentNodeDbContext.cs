@@ -9,7 +9,7 @@ namespace TalentNode.Infrastructure.Data
         public DbSet<UserDetails> UserDetails { get; set; }
         public DbSet<RoleMaster> RoleMasters { get; set; }
         public DbSet<UserRoleMapping> UserRoleMapping { get; set; }
-        public DbSet<EmployeEntity> Employees { get; set; }
+        public DbSet<EmployeEntity> SignupDetails { get; set; }
         public DbSet<DistrictMaster> DistrictMaster { get; set; }
         public DbSet<EmployeeQualification> EmployeeQualification { get; set; }
         public DbSet<Employee> Employee { get; set; }
