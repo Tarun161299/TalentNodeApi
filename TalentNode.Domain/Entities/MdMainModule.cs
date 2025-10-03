@@ -20,7 +20,11 @@ namespace TalentNode.Domain.Entities
         [Required]
         public int Roleid { get; set; }
 
-        // store child module IDs as plain text (comma separated or single ID)
         
+        public string Url { get; set; }
+        
+        public string Class { get; set; }
+        // store child module IDs as plain text (comma separated or single ID)
+
     }
 }

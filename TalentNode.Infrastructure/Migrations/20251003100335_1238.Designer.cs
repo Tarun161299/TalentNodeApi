@@ -12,8 +12,8 @@ using TalentNode.Infrastructure.Data;
 namespace TalentNode.Infrastructure.Migrations
 {
     [DbContext(typeof(TalentNodeDbContext))]
-    [Migration("20250817103721_inichanges3")]
-    partial class inichanges3
+    [Migration("20251003100335_1238")]
+    partial class _1238
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,37 +58,40 @@ namespace TalentNode.Infrastructure.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("DocName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.Property<int>("EmployeeID")
-                        .HasColumnType("int");
+                    b.Property<string>("FileContentBase64")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FileName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("FileType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<bool>("IsRemoved")
                         .HasColumnType("bit");
 
                     b.Property<string>("Link")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("UploadDate")
                         .HasColumnType("datetime2");
@@ -118,7 +121,7 @@ namespace TalentNode.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees");
+                    b.ToTable("SignupDetails");
                 });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.Employee", b =>
@@ -136,6 +139,9 @@ namespace TalentNode.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("EmpImageID")
+                        .HasColumnType("int");
 
                     b.Property<float>("Experience")
                         .HasColumnType("real");
@@ -155,8 +161,15 @@ namespace TalentNode.Infrastructure.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
+                    b.Property<int>("ResumeID")
+                        .HasColumnType("int");
+
                     b.Property<int>("StateID")
                         .HasColumnType("int");
+
+                    b.Property<string>("WorkingLocation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("EmployeeID");
 
@@ -197,6 +210,72 @@ namespace TalentNode.Infrastructure.Migrations
                     b.ToTable("EmployeeSkill");
                 });
 
+            modelBuilder.Entity("TalentNode.Domain.Entities.MDModule", b =>
+                {
+                    b.Property<string>("ModuleID")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Class")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("URL")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("ModuleID");
+
+                    b.ToTable("MdModule");
+                });
+
+            modelBuilder.Entity("TalentNode.Domain.Entities.MdMainModule", b =>
+                {
+                    b.Property<int>("Roleid")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MainModuleID")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Class")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Roleid", "MainModuleID");
+
+                    b.ToTable("MdMainModule");
+                });
+
+            modelBuilder.Entity("TalentNode.Domain.Entities.MdRoleModule", b =>
+                {
+                    b.Property<string>("MainModuleID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ModuleID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("MainModuleID", "ModuleID");
+
+                    b.ToTable("MdRoleModule");
+                });
+
             modelBuilder.Entity("TalentNode.Domain.Entities.QualificationMaster", b =>
                 {
                     b.Property<int>("QualificationID")
@@ -213,6 +292,29 @@ namespace TalentNode.Infrastructure.Migrations
                     b.HasKey("QualificationID");
 
                     b.ToTable("QualificationMaster");
+                });
+
+            modelBuilder.Entity("TalentNode.Domain.Entities.RoleMaster", b =>
+                {
+                    b.Property<int>("RoleID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleID"));
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("RoleDescription")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("RoleID");
+
+                    b.ToTable("RoleMasters");
                 });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.SkillMaster", b =>
@@ -249,6 +351,54 @@ namespace TalentNode.Infrastructure.Migrations
                     b.HasKey("StateID");
 
                     b.ToTable("StateMaster");
+                });
+
+            modelBuilder.Entity("TalentNode.Domain.Entities.UserDetails", b =>
+                {
+                    b.Property<int>("UserID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserID"));
+
+                    b.Property<DateTime>("Created_On")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EmailID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MobileNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Updated_On")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserID");
+
+                    b.ToTable("UserDetails");
+                });
+
+            modelBuilder.Entity("TalentNode.Domain.Entities.UserRoleMapping", b =>
+                {
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserName", "RoleId");
+
+                    b.ToTable("UserRoleMapping");
                 });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.DistrictMaster", b =>

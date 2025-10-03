@@ -40,7 +40,7 @@ namespace TalentNode.Infrastructure.Repositories
     }).ToList();
             if (userDetails.Count() > 0)
             {
-                if (User.UserName == userDetails[0].EmailID && User.Password == userDetails[0].Password)
+                if (User.UserName.Trim().ToLower() == userDetails[0].EmailID.Trim().ToLower() && User.Password == userDetails[0].Password)
                 {
                     var token = this.GenerateJwtToken(userDetails[0].roleId.ToString(), userDetails[0].roleName, userDetails[0].UserName, userDetails[0].EmailID);
                     return token;
