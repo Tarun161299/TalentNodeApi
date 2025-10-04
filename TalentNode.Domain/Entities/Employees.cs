@@ -22,30 +22,30 @@ namespace TalentNode.Domain.Entities
         [Required, MaxLength(150)]
         public string Email { get; set; }
        
-        public float Experience { get; set; }
+        public float? Experience { get; set; }
         [MaxLength(15)]
         public string Phone { get; set; }
 
         [ForeignKey(nameof(StateMaster))]
-        public int StateID { get; set; }
+        public int? StateID { get; set; }
         public StateMaster State { get; set; }
 
         [ForeignKey(nameof(DistrictMaster))]
-        public int DistrictID { get; set; }
-        public DistrictMaster District { get; set; }
+        public int? DistrictID { get; set; }
+        public DistrictMaster? District { get; set; }
 
-        public string WorkingLocation {get; set;}
-        public string CurrentPosition { get; set; }
+        public string? WorkingLocation {get; set;}
+        public string? CurrentPosition { get; set; }
 
-        public string ExpectedSalary { get; set; }
+        public string? ExpectedSalary { get; set; }
 
-        public string CurrentSalary { get; set; }
-        public int ResumeID { get; set; }
+        public string? CurrentSalary { get; set; }
+        public int? ResumeID { get; set; }
 
-        public int EmpImageID { get; set; }
+        public int? EmpImageID { get; set; }
 
 
-        public ICollection<EmployeeQualification> Qualifications { get; set; }
-        public ICollection<EmployeeSkill> Skills { get; set; }
+        public ICollection<EmployeeQualification>? Qualifications { get; set; }
+        public ICollection<EmployeeSkill>? Skills { get; set; }
     }
 }

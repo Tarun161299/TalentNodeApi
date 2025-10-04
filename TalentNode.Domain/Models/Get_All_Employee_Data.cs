@@ -14,7 +14,7 @@ namespace TalentNode.Domain.Models
         public string Email { get; set; }
         public string Phone { get; set; }
         public List<Qualification> Emp_Qualification { get; set; }
-        public float Experience { get; set; }
+        public float? Experience { get; set; }
         public List<Skills> Emp_Skills { get; set; }
         public string DistrictName { get; set; }
         public string StateName { get; set; }
