@@ -1,14 +1,14 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TalentNode.Domain.interfaces;
+﻿//using MediatR;
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
+//using TalentNode.Domain.interfaces;
 
-namespace TalentNode.Application.command
-{
-    public class UserProfileCommand(SignupInterface SignupInterface) : IRequestHandler<SignupCommand, int>
-    {
-    }
-}
+//namespace TalentNode.Application.command
+//{
+//    public class UserProfileCommand(SignupInterface SignupInterface) : IRequestHandler<SignupCommand, int>
+//    {
+//    }
+//}
