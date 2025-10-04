@@ -12,11 +12,13 @@ namespace TalentNode.Domain.Models
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public string Location { get; set; }
+        public string Address { get; set; }
+        public int StateId { get; set; }
+        public int Districtid { get; set; }
         public string CurrentPosition { get; set; }
-        public string CurrentCompany { get; set; }
+        public string CurrentSallary { get; set; }
         public string ExpectedSallary { get; set; }
-        public string ProfessionalSummary { get; set; }
-        
+        public int ResumeID { get; set; }
+        public int EmpImageID { get; set; }
     }
 }

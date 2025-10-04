@@ -9,6 +9,6 @@ namespace TalentNode.Domain.interfaces
 {
     public interface UserProfileInterface
     {
-        public Task<int> UserProfile(SignupDetailsModel User);
+        public Task<int> Employee(TalentNode.Domain.Models.UserProfileModel userProfile);
     }
 }
