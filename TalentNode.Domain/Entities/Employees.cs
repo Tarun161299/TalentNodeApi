@@ -35,7 +35,11 @@ namespace TalentNode.Domain.Entities
         public DistrictMaster District { get; set; }
 
         public string WorkingLocation {get; set;}
+        public string CurrentPosition { get; set; }
 
+        public string ExpectedSalary { get; set; }
+
+        public string CurrentSalary { get; set; }
         public int ResumeID { get; set; }
 
         public int EmpImageID { get; set; }

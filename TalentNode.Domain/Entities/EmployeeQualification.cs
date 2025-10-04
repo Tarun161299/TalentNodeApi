@@ -12,6 +12,10 @@ namespace TalentNode.Domain.Entities
         public Employee Employee { get; set; }
 
         public int QualificationID { get; set; }
+
+        public string Institute { get; set; }
+
+        public string PassingYesr { get; set; }
         public QualificationMaster Qualification { get; set; } 
     }
 }

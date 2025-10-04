@@ -23,6 +23,9 @@ namespace TalentNode.Infrastructure.Data
         public DbSet<MDModule> MdModule { get; set; }
         public DbSet<MdMainModule> MdMainModule { get; set; }
         public DbSet<MdRoleModule> MdRoleModule { get; set; }
+        public DbSet<Experience> Experience { get; set; }
+
+        public DbSet<EmployeeExperiences> EmployeeExperiences { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MdMainModule>()
@@ -53,7 +56,17 @@ namespace TalentNode.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(e => e.DistrictID)
                 .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<EmployeeExperiences>()
+          .HasOne(e => e.Employee)
+          .WithMany()
+          .HasForeignKey(e => e.EmployeeID)
+          .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<EmployeeExperiences>()
+                .HasOne(e => e.Experience)
+                .WithMany()
+                .HasForeignKey(e => e.ExperienceID)
+                .OnDelete(DeleteBehavior.Cascade);
             base.OnModelCreating(modelBuilder);
         }
 
