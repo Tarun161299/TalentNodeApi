@@ -105,7 +105,7 @@ namespace TalentNode.Infrastructure.Repositories
 
             EmployeeExperiences emp = new EmployeeExperiences();
             emp.EmployeeID = EmployeEntity.EmployeeID;
-            emp.EmployeeExperienceID = emp.EmployeeExperienceID;
+            emp.ExperienceID = exp.ExperienceID;
             dbContext.EmployeeExperiences.Add(emp);
 
             return dbContext.SaveChanges();
