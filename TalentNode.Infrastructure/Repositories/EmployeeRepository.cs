@@ -15,7 +15,7 @@ namespace TalentNode.Infrastructure.Repositories
 {
     public class EmployeeRepository(TalentNodeDbContext dbContext) : IEmployeeRepository
     {
-        
+
         public async Task<IEnumerable<EmployeEntity>> GetEmployees()
         {
             return await dbContext.SignupDetails.ToListAsync();
@@ -41,10 +41,10 @@ namespace TalentNode.Infrastructure.Repositories
                                        StateName = s.StateName,
                                        DistrictName = d.DistrictName,
                                        Experience = e.Experience,
-                                       FirstName=e.FirstName,
-                                       LastName=e.LastName,
-                                       Email=e.Email,
-                                       Phone=e.Phone,
+                                       FirstName = e.FirstName,
+                                       LastName = e.LastName,
+                                       Email = e.Email,
+                                       Phone = e.Phone,
                                        EmpImage = dbContext.Document
                         .Where(es => es.DocumentID == e.EmpImageID)
                         .Select(es => es.FileContentBase64)   // string or byte[]
@@ -92,9 +92,25 @@ namespace TalentNode.Infrastructure.Repositories
 
             return document;
 
+        }
+        public async Task<int> AddExperienceAsync(ExperienceModel EmployeEntity)
+        {
+            Experience exp = new Experience();
+            exp.OrganizationName = EmployeEntity.Company;
+            exp.FromDate = EmployeEntity.StartDate;
+            exp.ToDate = EmployeEntity.EndDate;
+            exp.CreatedOn = EmployeEntity.Created_On;
+            exp.UpdatedOn = EmployeEntity.Updated_On;
+            dbContext.Experience.Add(exp);
 
+            EmployeeExperiences emp = new EmployeeExperiences();
+            emp.EmployeeID = EmployeEntity.EmployeeID;
+            emp.EmployeeExperienceID = emp.EmployeeExperienceID;
+            dbContext.EmployeeExperiences.Add(emp);
 
+            return dbContext.SaveChanges();
 
+            
         }
     }
 }
