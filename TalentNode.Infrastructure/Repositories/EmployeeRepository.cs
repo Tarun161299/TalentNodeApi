@@ -102,7 +102,7 @@ namespace TalentNode.Infrastructure.Repositories
             exp.CreatedOn = EmployeEntity.Created_On;
             exp.UpdatedOn = EmployeEntity.Updated_On;
             dbContext.Experience.Add(exp);
-
+            dbContext.SaveChanges();
             EmployeeExperiences emp = new EmployeeExperiences();
             emp.EmployeeID = EmployeEntity.EmployeeID;
             emp.ExperienceID = exp.ExperienceID;
