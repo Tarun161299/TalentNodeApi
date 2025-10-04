@@ -16,5 +16,7 @@ namespace TalentNode.Domain.interfaces
 
         public  Task<DocumentDetails> GetDocumentByID(int EmployeeID);
 
+        public Task<int> AddExperienceAsync(ExperienceModel EmployeEntity);
+
     }
 }
