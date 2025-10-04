@@ -23,7 +23,7 @@ namespace TalentNode.Infrastructure.Repositories
                                  ModuleID      = y.MainModuleID,
                                  ChildModule   =
                                  (from role in dbContext.MdRoleModule join mdmaster in dbContext.MdModule on role.ModuleID equals mdmaster.ModuleID
-                                  where mdmaster.ModuleID!=y.MainModuleID
+                                  where mdmaster.ModuleID!=y.MainModuleID && role.MainModuleID==y.MainModuleID
                                   select new MDModule
                                   {
                                       ModuleID = role.ModuleID,
@@ -34,8 +34,8 @@ namespace TalentNode.Infrastructure.Repositories
                                   }).ToList(),
                                   
                                  Description   = y.Description,
-                                 URL           =null,
-                                 Class         =null
+                                 URL           =y.Url,
+                                 Class         =y.Class
                              }).ToList();
 
 

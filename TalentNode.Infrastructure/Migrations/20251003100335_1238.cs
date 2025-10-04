@@ -1,15 +1,78 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace TalentNode.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class _1238 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Document",
+                columns: table => new
+                {
+                    DocumentID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DocName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    FileType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    FileContentBase64 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Link = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    UploadDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsRemoved = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Document", x => x.DocumentID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MdMainModule",
+                columns: table => new
+                {
+                    MainModuleID = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Roleid = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Class = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MdMainModule", x => new { x.Roleid, x.MainModuleID });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MdModule",
+                columns: table => new
+                {
+                    ModuleID = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    URL = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Class = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MdModule", x => x.ModuleID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MdRoleModule",
+                columns: table => new
+                {
+                    MainModuleID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ModuleID = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MdRoleModule", x => new { x.MainModuleID, x.ModuleID });
+                });
+
             migrationBuilder.CreateTable(
                 name: "QualificationMaster",
                 columns: table => new
@@ -24,10 +87,38 @@ namespace TalentNode.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RoleMasters",
+                columns: table => new
+                {
+                    RoleID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleDescription = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoleMasters", x => x.RoleID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SignupDetails",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SignupDetails", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SkillMaster",
                 columns: table => new
                 {
-                    SkillID = table.Column<int>(type: "int", nullable: false) 
+                    SkillID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SkillName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false)
                 },
@@ -47,6 +138,36 @@ namespace TalentNode.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StateMaster", x => x.StateID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserDetails",
+                columns: table => new
+                {
+                    UserID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmailID = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MobileNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Created_On = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Updated_On = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserDetails", x => x.UserID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserRoleMapping",
+                columns: table => new
+                {
+                    UserName = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRoleMapping", x => new { x.UserName, x.RoleId });
                 });
 
             migrationBuilder.CreateTable(
@@ -78,9 +199,13 @@ namespace TalentNode.Infrastructure.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Experience = table.Column<float>(type: "real", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     StateID = table.Column<int>(type: "int", nullable: false),
-                    DistrictID = table.Column<int>(type: "int", nullable: false)
+                    DistrictID = table.Column<int>(type: "int", nullable: false),
+                    WorkingLocation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ResumeID = table.Column<int>(type: "int", nullable: false),
+                    EmpImageID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -177,10 +302,34 @@ namespace TalentNode.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Document");
+
+            migrationBuilder.DropTable(
                 name: "EmployeeQualification");
 
             migrationBuilder.DropTable(
                 name: "EmployeeSkill");
+
+            migrationBuilder.DropTable(
+                name: "MdMainModule");
+
+            migrationBuilder.DropTable(
+                name: "MdModule");
+
+            migrationBuilder.DropTable(
+                name: "MdRoleModule");
+
+            migrationBuilder.DropTable(
+                name: "RoleMasters");
+
+            migrationBuilder.DropTable(
+                name: "SignupDetails");
+
+            migrationBuilder.DropTable(
+                name: "UserDetails");
+
+            migrationBuilder.DropTable(
+                name: "UserRoleMapping");
 
             migrationBuilder.DropTable(
                 name: "QualificationMaster");

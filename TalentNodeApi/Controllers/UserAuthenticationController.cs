@@ -12,10 +12,10 @@ namespace TalentNodeApi.Controllers
     public class UserAuthenticationController(ISender sender) : ControllerBase
     {
         [HttpPost("Authenticate")]
-        public async Task<string> AuthenticateUser([FromBody] UserDetails employee)
+        public async Task<IActionResult> AuthenticateUser(UserDetails employee)
         {
             var result = await sender.Send(new UserAuthenticationCommand(employee));
-            return result;
+            return Ok(new { token = result });
         }
     }
 }
