@@ -12,37 +12,41 @@ using TalentNode.Domain.Entities;
 
 //using TalentNode.Domain.Entities;
 using TalentNode.Domain.interfaces;
-using Models=TalentNode.Domain.Models;
+using Models = TalentNode.Domain.Models;
 using TalentNode.Infrastructure.Data;
 using Entities = TalentNode.Domain.Entities;
 
 namespace TalentNode.Infrastructure.Repositories
 {
-    public class UserAuthenticationRepository(TalentNodeDbContext dbContext): IUserAuthenticationRepository
+    public class UserAuthenticationRepository(TalentNodeDbContext dbContext) : IUserAuthenticationRepository
     {
-        public async Task<string> AuthenticateUser (Models.UserDetails User)
+        public async Task<string> AuthenticateUser(Models.UserDetails User)
         {
             var userDetails = (from Usd in dbContext.UserDetails
-                              join URP in dbContext.UserRoleMapping on Usd.UserID.ToString() equals URP.UserName
-                            join RM in dbContext.RoleMasters on URP.RoleId equals RM.RoleID
-                              where Usd.EmailID.ToLower() == User.UserName.ToLower() && Usd.Password == User.Password
-                              select new Models.UserLoginDetails
-                              {
-                               UserID = Usd.UserID,
-                               UserName =Usd.UserName,
-                               EmailID =Usd.EmailID,
-                               Password =Usd.Password,
-                               MobileNumber =Usd.MobileNumber,
-                               Created_On =Usd.Created_On,
-                               Updated_On =Usd.Updated_On,
-                               roleId =RM.RoleID,
-                               roleName =RM.Role
-    }).ToList();
+                               join URP in dbContext.UserRoleMapping on Usd.UserID.ToString() equals URP.UserName
+                               join RM in dbContext.RoleMasters on URP.RoleId equals RM.RoleID
+                               join emp in dbContext.Employee
+                         on Usd.UserID equals emp.UserID into empGroup
+                               from employee in empGroup.DefaultIfEmpty()
+                               where Usd.EmailID.ToLower() == User.UserName.ToLower() && Usd.Password == User.Password
+                               select new Models.UserLoginDetails
+                               {
+                                   UserID = Usd.UserID,
+                                   UserName = Usd.UserName,
+                                   EmailID = Usd.EmailID,
+                                   Password = Usd.Password,
+                                   MobileNumber = Usd.MobileNumber,
+                                   Created_On = Usd.Created_On,
+                                   Updated_On = Usd.Updated_On,
+                                   roleId = RM.RoleID,
+                                   roleName = RM.Role,
+                                   Emp = employee.EmployeeID,
+                               }).ToList();
             if (userDetails.Count() > 0)
             {
                 if (User.UserName.Trim().ToLower() == userDetails[0].EmailID.Trim().ToLower() && User.Password == userDetails[0].Password)
                 {
-                    var token = this.GenerateJwtToken(userDetails[0].roleId.ToString(), userDetails[0].roleName, userDetails[0].UserName, userDetails[0].EmailID);
+                    var token = this.GenerateJwtToken(userDetails[0].roleId.ToString(), userDetails[0].roleName, userDetails[0].UserName, userDetails[0].EmailID, userDetails[0].Emp);
                     return token;
                 }
                 else
@@ -58,34 +62,38 @@ namespace TalentNode.Infrastructure.Repositories
 
         }
 
-        private string GenerateJwtToken(string Roleid,string RoleName,string Username,string Email)
-
+        private string GenerateJwtToken(string Roleid, string RoleName, string Username, string Email, int? Emp)
         {
-
             var tokenHandler = new JwtSecurityTokenHandler();
-
             var key = Encoding.ASCII.GetBytes("xxxxxxxsssssssdddddddaaaaaaaaaaaaaa");
 
-            var tokenDescriptor = new SecurityTokenDescriptor
+            // Build the claim list
+            var claims = new List<Claim>
+    {
+        new Claim("UserName", Username),
+        new Claim(ClaimTypes.Role, RoleName),
+        new Claim("Role_Id", Roleid),
+        new Claim("Email", Email)
+    };
 
+            // ✅ Conditionally add EmpId if role is 4
+            if (Roleid == "4" && Emp.HasValue)
             {
+                claims.Add(new Claim("EmpId", Emp.ToString()));
+            }
 
-                Subject = new ClaimsIdentity(new[] { new Claim("UserName", Username), new Claim(ClaimTypes.Role, RoleName), new Claim("Role_Id", Roleid), new Claim("Email", Email) }),
-
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
                 Issuer = "https://localhost:7054",
-
                 Audience = "https://localhost:7054",
-
                 Expires = DateTime.UtcNow.AddDays(7),
-
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-
             return tokenHandler.WriteToken(token);
-
         }
+
     }
 }

@@ -14,12 +14,12 @@ namespace TalentNode.Infrastructure.Repositories
     {
         public async Task<int> Employee(TalentNode.Domain.Models.UserProfileModel userProfile)
         {
-
-            TalentNode.Domain.Entities.Employee Employee = new TalentNode.Domain.Entities.Employee();
-            Employee.FirstName = userProfile.FirstName;
-            Employee.LastName = userProfile.LastName;
-            Employee.Email = userProfile.Email;
-            Employee.Phone = userProfile.Phone;
+            var Employee=dbContext.Employee.Where(x=>x.EmployeeID== userProfile.EmpId).ToList().FirstOrDefault();
+            
+            //Employee.FirstName = userProfile.FirstName;
+            //Employee.LastName = userProfile.LastName;
+            //Employee.Email = userProfile.Email;
+            //Employee.Phone = userProfile.Phone;
             Employee.WorkingLocation = userProfile.Address;
             Employee.StateID = userProfile.StateId;
             Employee.DistrictID = userProfile.Districtid;
@@ -29,7 +29,7 @@ namespace TalentNode.Infrastructure.Repositories
 
             
 
-            dbContext.Employee.Add(Employee);
+            dbContext.Employee.Update(Employee);
             
             return dbContext.SaveChanges();
         }

@@ -57,17 +57,7 @@ namespace TalentNode.Infrastructure.Data
                 .HasForeignKey(e => e.DistrictID)
                 .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<EmployeeExperiences>()
-          .HasOne(e => e.Employee)
-          .WithMany()
-          .HasForeignKey(e => e.EmployeeID)
-          .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<EmployeeExperiences>()
-                .HasOne(e => e.Experience)
-                .WithMany()
-                .HasForeignKey(e => e.ExperienceID)
-                .OnDelete(DeleteBehavior.Cascade);
-            base.OnModelCreating(modelBuilder);
+            .HasKey(e => new { e.EmployeeID, e.ExperienceID });
         }
 
     }

@@ -16,6 +16,9 @@ namespace TalentNode.Domain.Entities
         [Required, MaxLength(100)]
         public string FirstName { get; set; }
 
+        [Required, MaxLength(100)]
+        public int UserID { get; set; }
+
         [MaxLength(100)]
         public string LastName { get; set; } 
 

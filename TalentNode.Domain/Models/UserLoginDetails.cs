@@ -23,6 +23,8 @@ namespace TalentNode.Domain.Models
 
         public int? roleId { get; set; }
 
+        public int? Emp { get; set; }
+
         public string? roleName { get; set; }
     }
 }

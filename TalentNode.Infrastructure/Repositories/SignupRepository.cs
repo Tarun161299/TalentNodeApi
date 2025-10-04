@@ -26,12 +26,26 @@ namespace TalentNode.Infrastructure.Repositories
             userDetails.MobileNumber = signup.PhoneNumber;
             userDetails.Created_On = DateTime.Now;
             userDetails.Updated_On = DateTime.Now;
-
+            TalentNode.Domain.Entities.Employee employee = new TalentNode.Domain.Entities.Employee();
+            employee.Email = signup.Email;
+            employee.FirstName = signup.Name.Split(" ").Count()>=1? signup.Name.Split(" ")[0]: signup.Name;
+            if(signup.Name.Split(" ").Length > 1)
+            {
+                string[] nameArr = new string[signup.Name.Split(" ").Length - 1];// signup.Name.Split(" ");
+                employee.LastName = string.Join(" ", nameArr);
+            }
+            else
+            {
+                employee.LastName = " ";
+            }
+            employee.Phone= signup.PhoneNumber;
             TalentNode.Domain.Entities.UserRoleMapping userRoleMapping = new TalentNode.Domain.Entities.UserRoleMapping();
-           
+            
             dbContext.UserDetails.Add(userDetails);
             dbContext.SaveChanges();
+            employee.UserID = userDetails.UserID;
             userRoleMapping.UserName = userDetails.UserID.ToString();
+            dbContext.Employee.Add(employee);
             userRoleMapping.RoleId = 4;
             dbContext.UserRoleMapping.Add(userRoleMapping);
 
