@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TalentNode.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class _1238 : Migration
+    public partial class _12 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,6 +30,64 @@ namespace TalentNode.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Document", x => x.DocumentID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeeExperiences",
+                columns: table => new
+                {
+                    EmployeeID = table.Column<int>(type: "int", nullable: false),
+                    ExperienceID = table.Column<int>(type: "int", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeExperiences", x => new { x.EmployeeID, x.ExperienceID });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeeQualification",
+                columns: table => new
+                {
+                    EmpID = table.Column<int>(type: "int", nullable: false),
+                    QualID = table.Column<int>(type: "int", nullable: false),
+                    Institute = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PassingYesr = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeQualification", x => new { x.EmpID, x.QualID });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeeSkill",
+                columns: table => new
+                {
+                    EmployeeID = table.Column<int>(type: "int", nullable: false),
+                    SkillID = table.Column<int>(type: "int", nullable: false),
+                    level = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeSkill", x => new { x.EmployeeID, x.SkillID });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Experience",
+                columns: table => new
+                {
+                    ExperienceID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrganizationName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    FromDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ToDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Experience", x => x.ExperienceID);
                 });
 
             migrationBuilder.CreateTable(
@@ -197,15 +255,19 @@ namespace TalentNode.Infrastructure.Migrations
                     EmployeeID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UserID = table.Column<int>(type: "int", maxLength: 100, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Experience = table.Column<float>(type: "real", nullable: false),
+                    Experience = table.Column<float>(type: "real", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    StateID = table.Column<int>(type: "int", nullable: false),
-                    DistrictID = table.Column<int>(type: "int", nullable: false),
-                    WorkingLocation = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ResumeID = table.Column<int>(type: "int", nullable: false),
-                    EmpImageID = table.Column<int>(type: "int", nullable: false)
+                    StateID = table.Column<int>(type: "int", nullable: true),
+                    DistrictID = table.Column<int>(type: "int", nullable: true),
+                    WorkingLocation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CurrentPosition = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExpectedSalary = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CurrentSalary = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ResumeID = table.Column<int>(type: "int", nullable: true),
+                    EmpImageID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -224,54 +286,6 @@ namespace TalentNode.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "EmployeeQualification",
-                columns: table => new
-                {
-                    EmployeeID = table.Column<int>(type: "int", nullable: false),
-                    QualificationID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmployeeQualification", x => new { x.EmployeeID, x.QualificationID });
-                    table.ForeignKey(
-                        name: "FK_EmployeeQualification_Employee_EmployeeID",
-                        column: x => x.EmployeeID,
-                        principalTable: "Employee",
-                        principalColumn: "EmployeeID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EmployeeQualification_QualificationMaster_QualificationID",
-                        column: x => x.QualificationID,
-                        principalTable: "QualificationMaster",
-                        principalColumn: "QualificationID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EmployeeSkill",
-                columns: table => new
-                {
-                    EmployeeID = table.Column<int>(type: "int", nullable: false),
-                    SkillID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmployeeSkill", x => new { x.EmployeeID, x.SkillID });
-                    table.ForeignKey(
-                        name: "FK_EmployeeSkill_Employee_EmployeeID",
-                        column: x => x.EmployeeID,
-                        principalTable: "Employee",
-                        principalColumn: "EmployeeID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EmployeeSkill_SkillMaster_SkillID",
-                        column: x => x.SkillID,
-                        principalTable: "SkillMaster",
-                        principalColumn: "SkillID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_DistrictMaster_StateID",
                 table: "DistrictMaster",
@@ -286,16 +300,6 @@ namespace TalentNode.Infrastructure.Migrations
                 name: "IX_Employee_StateID",
                 table: "Employee",
                 column: "StateID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EmployeeQualification_QualificationID",
-                table: "EmployeeQualification",
-                column: "QualificationID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EmployeeSkill_SkillID",
-                table: "EmployeeSkill",
-                column: "SkillID");
         }
 
         /// <inheritdoc />
@@ -305,10 +309,19 @@ namespace TalentNode.Infrastructure.Migrations
                 name: "Document");
 
             migrationBuilder.DropTable(
+                name: "Employee");
+
+            migrationBuilder.DropTable(
+                name: "EmployeeExperiences");
+
+            migrationBuilder.DropTable(
                 name: "EmployeeQualification");
 
             migrationBuilder.DropTable(
                 name: "EmployeeSkill");
+
+            migrationBuilder.DropTable(
+                name: "Experience");
 
             migrationBuilder.DropTable(
                 name: "MdMainModule");
@@ -320,25 +333,22 @@ namespace TalentNode.Infrastructure.Migrations
                 name: "MdRoleModule");
 
             migrationBuilder.DropTable(
+                name: "QualificationMaster");
+
+            migrationBuilder.DropTable(
                 name: "RoleMasters");
 
             migrationBuilder.DropTable(
                 name: "SignupDetails");
 
             migrationBuilder.DropTable(
+                name: "SkillMaster");
+
+            migrationBuilder.DropTable(
                 name: "UserDetails");
 
             migrationBuilder.DropTable(
                 name: "UserRoleMapping");
-
-            migrationBuilder.DropTable(
-                name: "QualificationMaster");
-
-            migrationBuilder.DropTable(
-                name: "Employee");
-
-            migrationBuilder.DropTable(
-                name: "SkillMaster");
 
             migrationBuilder.DropTable(
                 name: "DistrictMaster");

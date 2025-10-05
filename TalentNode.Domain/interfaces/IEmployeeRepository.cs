@@ -18,5 +18,6 @@ namespace TalentNode.Domain.interfaces
 
         public Task<int> AddExperienceAsync(ExperienceModel EmployeEntity);
 
+        public Task<int> AddEducationAsync(List<EducationModel> EmployeeQualification);
     }
 }

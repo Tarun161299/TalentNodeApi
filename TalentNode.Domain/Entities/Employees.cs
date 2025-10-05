@@ -48,7 +48,6 @@ namespace TalentNode.Domain.Entities
         public int? EmpImageID { get; set; }
 
 
-        public ICollection<EmployeeQualification>? Qualifications { get; set; }
-        public ICollection<EmployeeSkill>? Skills { get; set; }
+        
     }
 }

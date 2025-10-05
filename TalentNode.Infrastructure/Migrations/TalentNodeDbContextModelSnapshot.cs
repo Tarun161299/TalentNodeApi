@@ -210,10 +210,10 @@ namespace TalentNode.Infrastructure.Migrations
 
             modelBuilder.Entity("TalentNode.Domain.Entities.EmployeeQualification", b =>
                 {
-                    b.Property<int>("EmployeeID")
+                    b.Property<int>("EmpID")
                         .HasColumnType("int");
 
-                    b.Property<int>("QualificationID")
+                    b.Property<int>("QualID")
                         .HasColumnType("int");
 
                     b.Property<string>("Institute")
@@ -224,12 +224,7 @@ namespace TalentNode.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("QualificationMasterQualificationID")
-                        .HasColumnType("int");
-
-                    b.HasKey("EmployeeID", "QualificationID");
-
-                    b.HasIndex("QualificationMasterQualificationID");
+                    b.HasKey("EmpID", "QualID");
 
                     b.ToTable("EmployeeQualification");
                 });
@@ -242,9 +237,10 @@ namespace TalentNode.Infrastructure.Migrations
                     b.Property<int>("SkillID")
                         .HasColumnType("int");
 
-                    b.HasKey("EmployeeID", "SkillID");
+                    b.Property<string>("level")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("SkillID");
+                    b.HasKey("EmployeeID", "SkillID");
 
                     b.ToTable("EmployeeSkill");
                 });
@@ -496,55 +492,6 @@ namespace TalentNode.Infrastructure.Migrations
                     b.Navigation("District");
 
                     b.Navigation("State");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.EmployeeQualification", b =>
-                {
-                    b.HasOne("TalentNode.Domain.Entities.Employee", null)
-                        .WithMany("Qualifications")
-                        .HasForeignKey("EmployeeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TalentNode.Domain.Entities.QualificationMaster", null)
-                        .WithMany("EmployeeQualifications")
-                        .HasForeignKey("QualificationMasterQualificationID");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.EmployeeSkill", b =>
-                {
-                    b.HasOne("TalentNode.Domain.Entities.Employee", "Employee")
-                        .WithMany("Skills")
-                        .HasForeignKey("EmployeeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TalentNode.Domain.Entities.SkillMaster", "Skill")
-                        .WithMany("EmployeeSkills")
-                        .HasForeignKey("SkillID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("Skill");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.Employee", b =>
-                {
-                    b.Navigation("Qualifications");
-
-                    b.Navigation("Skills");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.QualificationMaster", b =>
-                {
-                    b.Navigation("EmployeeQualifications");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.SkillMaster", b =>
-                {
-                    b.Navigation("EmployeeSkills");
                 });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.StateMaster", b =>

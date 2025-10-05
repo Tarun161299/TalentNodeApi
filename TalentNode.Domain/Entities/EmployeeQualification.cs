@@ -8,9 +8,9 @@ namespace TalentNode.Domain.Entities
 {
     public class EmployeeQualification
     {
-        public int EmployeeID { get; set; }
+        public int EmpID { get; set; }
 
-        public int QualificationID { get; set; }
+        public int QualID { get; set; }
 
         public string Institute { get; set; }
 
