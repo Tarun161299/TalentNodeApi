@@ -15,6 +15,6 @@ namespace TalentNode.Domain.Entities
         [Required, MaxLength(150)]
         public string SkillName { get; set; }
 
-        public ICollection<EmployeeSkill> EmployeeSkills { get; set; }
+        
     }
 }

@@ -58,10 +58,10 @@ namespace TalentNode.Infrastructure.Repositories
                                                          SkillName = sm.SkillName,
                                                      }).ToList(),
 
-                                       Emp_Qualification = (from eq in dbContext.EmployeeQualification
-                                                            join qm in dbContext.QualificationMaster on eq.QualificationID equals qm.QualificationID
-                                                            where eq.EmployeeID == e.EmployeeID
-                                                            select new Qualification { QualificationId = eq.QualificationID, QualificationName = qm.QualificationName }).ToList()
+                                       //Emp_Qualification = (from eq in dbContext.EmployeeQualification
+                                       //                     join qm in dbContext.QualificationMaster on eq.QualID equals qm.QualificationID
+                                       //                     where eq.EmpID == e.EmployeeID
+                                       //                     select new Qualification { QualificationId = eq.QualID, QualificationName = qm.QualificationName }).ToList()
                                    }).ToList();
             return employeeDetails;
 
@@ -107,10 +107,26 @@ namespace TalentNode.Infrastructure.Repositories
             emp.EmployeeID = EmployeEntity.EmployeeID;
             emp.ExperienceID = exp.ExperienceID;
             dbContext.EmployeeExperiences.Add(emp);
-
+            return dbContext.SaveChanges();
+        }
+        public async Task<int> AddEducationAsync(List<EducationModel> EmployeEntity)
+        {
+            List<EmployeeQualification> eq = new List<EmployeeQualification>();
+            foreach (var item in EmployeEntity)
+            {
+                EmployeeQualification record = new EmployeeQualification();
+                record.EmpID = item.EmployeeID;
+                record.QualID = item.QualificationID;
+                record.Institute = item.Institution;
+                record.PassingYesr = item.Year;
+                eq.Add(record);
+            }
+           // dbContext.EmployeeQualification.AddRange(eq);
             return dbContext.SaveChanges();
 
-            
         }
-    }
+
+            
+        
+        }
 }
