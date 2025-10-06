@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TalentNode.Application.command;
 using TalentNode.Domain.Entities;
 using TalentNode.Domain.Models;
+using TalentNode.Domain.Models.YourNamespace.Models;
 
 namespace TalentNodeApi.Controllers
 {
@@ -29,6 +30,13 @@ namespace TalentNodeApi.Controllers
         public async Task<DocumentDetails> GetResumeById(int EmployeeID)
         {
             var result = await sender.Send(new GetDocumentByEmployeeIDCommand(EmployeeID));
+            return result;
+        }
+
+        [HttpGet("GetEmployeeDetails")]
+        public async Task<UserProfile> GetEmployeeDetails(int EmployeeID)
+        {
+            var result = await sender.Send(new EmployeeDetailsCommand(EmployeeID));
             return result;
         }
     }

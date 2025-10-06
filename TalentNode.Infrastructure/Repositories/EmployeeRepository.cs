@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using TalentNode.Domain.Entities;
 using TalentNode.Domain.interfaces;
 using TalentNode.Domain.Models;
+using TalentNode.Domain.Models.YourNamespace.Models;
 using TalentNode.Infrastructure.Data;
 
 namespace TalentNode.Infrastructure.Repositories
@@ -126,7 +127,175 @@ namespace TalentNode.Infrastructure.Repositories
 
         }
 
-            
-        
+        public async Task<UserProfile> GetEmployeeDetails(int emplyeeid)
+        {
+
+            var employee = dbContext.Employee.FirstOrDefault(e => e.EmployeeID == emplyeeid);
+            if (employee == null) return null;
+
+            var avatar = dbContext.Document.FirstOrDefault(d => d.DocumentID == employee.EmpImageID)?.Link ?? "";
+            var resume = dbContext.Document.FirstOrDefault(d => d.DocumentID == employee.ResumeID)?.Link ?? "";
+            var districtName = dbContext.DistrictMaster.FirstOrDefault(d => d.DistrictID == employee.DistrictID)?.DistrictName ?? "";
+            var stateName = dbContext.StateMaster.FirstOrDefault(s => s.StateID == employee.StateID)?.StateName ?? "";
+
+            var education = dbContext.EmployeeQualification
+                .Where(eq => eq.EmpID == employee.EmployeeID)
+                .Join(dbContext.QualificationMaster,
+                      eq => eq.QualID,
+                      q => q.QualificationID,
+                      (eq, q) => new EducationDetail
+                      {
+                          Degree = q.QualificationName ?? "",
+                          Institution = eq.Institute ?? "",
+                          Year = Convert.ToInt32(eq.PassingYesr ?? "0"),
+                          Percentage = 0
+                      }).ToList();
+
+            var experience = dbContext.EmployeeExperiences
+                .Where(exMap => exMap.EmployeeID == employee.EmployeeID)
+                .Join(dbContext.Experience,
+                      exMap => exMap.ExperienceID,
+                      ex => ex.ExperienceID,
+                      (exMap, ex) => new ExperienceDetail
+                      {
+                          Company = ex.OrganizationName ?? "",
+                          Position = employee.CurrentPosition ?? "",
+                          StartDate = ex.FromDate.ToString("yyyy-MM"),
+                          EndDate = ex.ToDate != DateTime.MinValue ? ex.ToDate.ToString("yyyy-MM") : "",
+                          Current = ex.ToDate == DateTime.MinValue,
+                          Description = ""
+                      }).ToList();
+
+            var skills = dbContext.EmployeeSkill
+                .Where(es => es.EmployeeID == employee.EmployeeID)
+                .Join(dbContext.SkillMaster,
+                      es => es.SkillID,
+                      sm => sm.SkillID,
+                      (es, sm) => new SkillDetail
+                      {
+                          Name = sm.SkillName ?? "",
+                          Level = es.level ?? ""
+                      }).ToList();
+
+            // build final UserProfile
+            var userProfile = new UserProfile
+            {
+                Id = employee.EmployeeID,
+                FirstName = employee.FirstName ?? "",
+                LastName = employee.LastName ?? "",
+                Email = employee.Email ?? "",
+                Phone = employee.Phone ?? "",
+                CurrentPosition = employee.CurrentPosition ?? "",
+                CurrentCompany = employee.WorkingLocation ?? "",
+                ExpectedSalary = decimal.TryParse(employee.ExpectedSalary ?? "0", out var sal) ? sal : 0,
+                Avatar = avatar,
+                Resume = resume,
+                Location = districtName + ", " + stateName,
+                Education = education,
+                Experience = experience,
+                Skills = skills,
+                Languages = new List<string> { "English", "Hindi" },
+                SocialLinks = new SocialLinks { Linkedin = "", Github = "", Portfolio = "" }
+            };
+
+            return userProfile;
+
+            //        var employeeData = dbContext.Employee
+            //.Where(e => e.EmployeeID == emplyeeid)
+            //.Select(e => new
+            //{
+            //    e.EmployeeID,
+            //    e.FirstName,
+            //    e.LastName,
+            //    e.Email,
+            //    e.Phone,
+            //    e.CurrentPosition,
+            //    e.WorkingLocation,
+            //    e.ExpectedSalary,
+            //    e.EmpImageID,
+            //    e.ResumeID,
+            //    e.StateID,
+            //    e.DistrictID
+            //})
+            //.AsEnumerable() // move to in-memory to allow TryParse
+            //.Select(e => new UserProfile
+            //{
+            //    Id = e.EmployeeID,
+            //    FirstName = e.FirstName ?? "",
+            //    LastName = e.LastName ?? "",
+            //    Email = e.Email ?? "",
+            //    Phone = e.Phone ?? "",
+            //    CurrentPosition = e.CurrentPosition ?? "",
+            //    CurrentCompany = e.WorkingLocation ?? "",
+            //    ExpectedSalary = decimal.TryParse(e.ExpectedSalary ?? "0", out var sal) ? sal : 0,
+
+            //    // Avatar and Resume
+            //    Avatar = dbContext.Document.FirstOrDefault(d => d.DocumentID == e.EmpImageID)?.Link ?? "",
+            //    Resume = dbContext.Document.FirstOrDefault(d => d.DocumentID == e.ResumeID)?.Link ?? "",
+
+            //    // Location
+            //    Location = (dbContext.DistrictMaster.FirstOrDefault(d => d.DistrictID == e.DistrictID)?.DistrictName ?? "")
+            //             + ", "
+            //             + (dbContext.StateMaster.FirstOrDefault(s => s.StateID == e.StateID)?.StateName ?? ""),
+
+            //    // Education
+            //    Education = dbContext.EmployeeQualification
+            //        .Where(eq => eq.EmpID == e.EmployeeID)
+            //        .Join(dbContext.QualificationMaster,
+            //              eq => eq.QualID,
+            //              q => q.QualificationID,
+            //              (eq, q) => new EducationDetail
+            //              {
+            //                  Degree = q.QualificationName ?? "",
+            //                  Institution = eq.Institute ?? "",
+            //                  Year = Convert.ToInt32(eq.PassingYesr ?? "0"),
+            //                  Percentage = 0
+            //              }).ToList(),
+
+            //    // Experience
+            //    Experience = dbContext.EmployeeExperiences
+            //        .Where(exMap => exMap.EmployeeID == e.EmployeeID)
+            //        .Join(dbContext.Experience,
+            //              exMap => exMap.ExperienceID,
+            //              ex => ex.ExperienceID,
+            //              (exMap, ex) => new ExperienceDetail
+            //              {
+            //                  Company = ex.OrganizationName ?? "",
+            //                  Position = e.CurrentPosition ?? "",
+            //                  StartDate = ex.FromDate.ToString("yyyy-MM"),
+            //                  EndDate = ex.ToDate != DateTime.MinValue ? ex.ToDate.ToString("yyyy-MM") : "",
+            //                  Current = ex.ToDate == DateTime.MinValue,
+            //                  Description = ""
+            //              }).ToList(),
+
+            //    // Skills
+            //    Skills = dbContext.EmployeeSkill
+            //        .Where(es => es.EmployeeID == e.EmployeeID)
+            //        .Join(dbContext.SkillMaster,
+            //              es => es.SkillID,
+            //              sm => sm.SkillID,
+            //              (es, sm) => new SkillDetail
+            //              {
+            //                  Name = sm.SkillName ?? "",
+            //                  Level = es.level ?? ""
+            //              }).ToList(),
+
+            //    // Languages (placeholder)
+            //    Languages = new List<string> { "English", "Hindi" },
+
+            //    // Social links (placeholder)
+            //    SocialLinks = new SocialLinks
+            //    {
+            //        Linkedin = "",
+            //        Github = "",
+            //        Portfolio = ""
+            //    }
+            //})
+            //.FirstOrDefault();
+
+           // return employeeData;
+
         }
+
+    }
 }
