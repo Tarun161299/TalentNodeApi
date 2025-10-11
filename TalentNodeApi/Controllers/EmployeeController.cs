@@ -12,11 +12,11 @@ namespace TalentNodeApi.Controllers
     [ApiController]
     public class EmployeeController(ISender sender) : ControllerBase
     {
-        [HttpPost("")]
-        public async Task<IActionResult> AddEmployeeAsync([FromBody] EmployeEntity employee)
+        [HttpPost("saveEmployee")]
+        public async Task<IActionResult> AddEmployeeAsync([FromBody] SaveEmployee employee)
         {
             var result = await sender.Send(new AddEmployeeCommand(employee));
-            return Ok();
+            return Ok(result);
         }
 
         [HttpGet("Get_All_Employee_Data")]
@@ -37,6 +37,13 @@ namespace TalentNodeApi.Controllers
         public async Task<UserProfile> GetEmployeeDetails(int EmployeeID)
         {
             var result = await sender.Send(new EmployeeDetailsCommand(EmployeeID));
+            return result;
+        }
+
+        [HttpPost("saveSkillDetails")]
+        public async Task<int> saveSkillDetails(List<SkillAdd> SkillAdd)
+        {
+            var result = await sender.Send(new AddSkillsDetailsCommand(SkillAdd));
             return result;
         }
     }

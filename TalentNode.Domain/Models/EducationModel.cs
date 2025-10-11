@@ -8,10 +8,12 @@ namespace TalentNode.Domain.Models
 {
     public class EducationModel
     {
-        public int EmployeeID {  get; set; }
-        public int QualificationID { get; set; }
+        public int degEmpId {  get; set; }
+        public string degree { get; set; }
         public string Institution { get; set; }
-        public string Year { get; set; }
+
+        public decimal? Percentage { get; set; }
+        public int Year { get; set; }
 
     }
 }

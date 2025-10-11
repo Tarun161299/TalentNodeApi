@@ -49,6 +49,18 @@ namespace TalentNode.Infrastructure.Repositories
                              };
             return mdSkill.ToList();
         }
+        public async Task<List<MDQualification>> GetAllQualification()
+        {
+            var QualificationMaster = dbContext.QualificationMaster;
+            var mdQualificationMaster = from d in QualificationMaster
+                          select new MDQualification
+                          {
+                              QualID = d.QualificationID,
+                              QualificationName = d.QualificationName
+
+                          };
+            return mdQualificationMaster.ToList();
+        }
 
 
     }

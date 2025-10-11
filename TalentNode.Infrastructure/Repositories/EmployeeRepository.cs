@@ -22,12 +22,34 @@ namespace TalentNode.Infrastructure.Repositories
             return await dbContext.SignupDetails.ToListAsync();
         }
 
-        public async Task<EmployeEntity> AddEmployeeAsync(EmployeEntity EmployeEntity)
+        public async Task<int> AddEmployeeAsync(SaveEmployee model)
         {
-            EmployeEntity.Id = Guid.NewGuid();
-            dbContext.SignupDetails.Add(EmployeEntity);
-            await dbContext.SaveChangesAsync();
-            return EmployeEntity;
+            if (model == null || model.EmpId <= 0)
+                return 0;
+
+            // Fetch the employee record
+            var employee = dbContext.Employee.FirstOrDefault(e => e.EmployeeID == model.EmpId);
+            if (employee == null)
+                return 0;
+
+
+            // Update only the requested fields
+            employee.WorkingLocation = model.Location ?? employee.WorkingLocation;
+            employee.StateID = model.State != 0 ? model.State : employee.StateID;
+            employee.DistrictID = model.District != 0 ? model.District : employee.DistrictID;
+            employee.CurrentPosition = model.CurrentPosition ?? employee.CurrentPosition;
+            employee.CurrentSalary = model.CurrentSallary?.ToString() ?? employee.CurrentSalary;
+            employee.ExpectedSalary = model.ExpectedSallary?.ToString() ?? employee.ExpectedSalary;
+            employee.ResumeID = employee.ResumeID; // not updating
+            employee.EmpImageID = employee.EmpImageID; // not updating
+            employee.Experience = employee.Experience; // not updating
+            employee.Email = employee.Email; // not updating
+            employee.Phone = employee.Phone; // not updating
+            employee.WorkingLocation = model.Location ?? employee.WorkingLocation; // map to company if stored there
+            employee.Professional_Summary = model.Bio ?? employee.Professional_Summary;
+            dbContext.Employee.Update(employee);
+            // Save changes
+           return dbContext.SaveChanges();
 
         }
         public async Task<List<Get_All_Employee_Data>> Get_All_Employee_Data()
@@ -94,35 +116,124 @@ namespace TalentNode.Infrastructure.Repositories
             return document;
 
         }
-        public async Task<int> AddExperienceAsync(ExperienceModel EmployeEntity)
+        public async Task<int> AddExperienceAsync(List<ExperienceModel> EmployeEntity)
         {
-            Experience exp = new Experience();
-            exp.OrganizationName = EmployeEntity.Company;
-            exp.FromDate = EmployeEntity.StartDate;
-            exp.ToDate = EmployeEntity.EndDate;
-            exp.CreatedOn = EmployeEntity.Created_On;
-            exp.UpdatedOn = EmployeEntity.Updated_On;
-            dbContext.Experience.Add(exp);
-            dbContext.SaveChanges();
-            EmployeeExperiences emp = new EmployeeExperiences();
-            emp.EmployeeID = EmployeEntity.EmployeeID;
-            emp.ExperienceID = exp.ExperienceID;
-            dbContext.EmployeeExperiences.Add(emp);
+            if (EmployeEntity == null)
+                return 0;
+            dbContext.EmployeeExperiences.RemoveRange(dbContext.EmployeeExperiences.Where(x => x.EmployeeID == EmployeEntity[0].EmployeeID));
+
+
+            foreach (var EE in EmployeEntity)
+            {
+                
+                //if (dbContext.Experience.Where(x => x.ExperienceID == EE.ExperienceId).FirstOrDefault() != null)
+                //{
+                //    var record = dbContext.Experience.Where(x=>x.ExperienceID==EE.ExperienceId).FirstOrDefault();
+                //    record.OrganizationName = EE.Company;
+                //    record.FromDate = EE.StartDate;
+                //    record.ToDate = EE.EndDate;
+                //    record.workDescription = EE.Description;
+                //    //record.CreatedOn = DateTime.Now;
+                //    record.UpdatedOn = DateTime.Now;
+                //    record.position = EE.Position;
+                //    dbContext.Experience.Update(record);
+                //    //var emp = dbContext.EmployeeExperiences.Where(x => x.EmployeeID == EE.EmployeeID).FirstOrDefault();
+                //    //emp.EmployeeID = EE.EmployeeID;
+                //    //emp.ExperienceID = record.ExperienceID;
+                //    //dbContext.EmployeeExperiences.Add(emp);
+                //}
+                //else
+                //{
+                    Experience record = new Experience();
+                    record.OrganizationName = EE.Company;
+                    record.FromDate = EE.StartDate;
+                    record.ToDate = EE.EndDate ;
+                    record.CreatedOn = DateTime.Now;
+                    record.workDescription = EE.Description;
+                    //record.CreatedOn = EE.Created_On;
+                    //record.UpdatedOn = EE.Updated_On;
+                    record.position = EE.Position;
+                    dbContext.Experience.Add(record);
+                    dbContext.SaveChanges();
+                    EmployeeExperiences emp = new EmployeeExperiences();
+                    emp.EmployeeID = EE.EmployeeID;
+                    emp.ExperienceID = record.ExperienceID;
+                    dbContext.EmployeeExperiences.Add(emp);
+                   
+                //}
+ 
+            }
+            
+            //dbContext.SaveChanges();
+            
             return dbContext.SaveChanges();
         }
         public async Task<int> AddEducationAsync(List<EducationModel> EmployeEntity)
         {
+            if (EmployeEntity == null)
+            {
+                return 0;
+            }
+            dbContext.EmployeeQualification.RemoveRange(dbContext.EmployeeQualification.Where(x=>x.EmpID== EmployeEntity[0].degEmpId));
+
             List<EmployeeQualification> eq = new List<EmployeeQualification>();
             foreach (var item in EmployeEntity)
             {
-                EmployeeQualification record = new EmployeeQualification();
-                record.EmpID = item.EmployeeID;
-                record.QualID = item.QualificationID;
-                record.Institute = item.Institution;
-                record.PassingYesr = item.Year;
-                eq.Add(record);
+                //if(dbContext.EmployeeQualification.Where(x=>x.QualID==item.QualificationID && x.EmpID == item.EmployeeID).FirstOrDefault() == null)
+                //{
+                    EmployeeQualification record = new EmployeeQualification();
+                    record.EmpID = item.degEmpId;
+                    record.QualID =Convert.ToInt32(item.degree);
+                    record.Institute = item.Institution;
+                    record.PassingYesr = item.Year.ToString();
+                record.Percentage_CGPA = item.Percentage;
+                    dbContext.EmployeeQualification.Add(record);
+                //}
+                //else
+                //{
+                //    var record = dbContext.EmployeeQualification.Where(x => x.QualID == item.QualificationID && x.EmpID == item.EmployeeID).FirstOrDefault();
+                //    record.Institute = item.Institution;
+                //    record.PassingYesr = item.Year;
+                //    dbContext.EmployeeQualification.Update(record);
+                //}
+
             }
            // dbContext.EmployeeQualification.AddRange(eq);
+            return dbContext.SaveChanges();
+
+        }
+
+
+        public async Task<int> AddskillsAsync(List<SkillAdd> EmployeEntity)
+        {
+            if (EmployeEntity == null)
+            {
+                return 0;
+            }
+            dbContext.EmployeeSkill.RemoveRange(dbContext.EmployeeSkill.Where(x => x.EmployeeID == EmployeEntity[0].skillEmpId));
+
+            List<EmployeeQualification> eq = new List<EmployeeQualification>();
+            foreach (var item in EmployeEntity)
+            {
+                //if(dbContext.EmployeeQualification.Where(x=>x.QualID==item.QualificationID && x.EmpID == item.EmployeeID).FirstOrDefault() == null)
+                //{
+                EmployeeSkill record = new EmployeeSkill();
+                record.SkillID = item.name;
+                record.EmployeeID = Convert.ToInt32(item.skillEmpId);
+                record.level = item.level;
+                
+                dbContext.EmployeeSkill.Add(record);
+                //}
+                //else
+                //{
+                //    var record = dbContext.EmployeeQualification.Where(x => x.QualID == item.QualificationID && x.EmpID == item.EmployeeID).FirstOrDefault();
+                //    record.Institute = item.Institution;
+                //    record.PassingYesr = item.Year;
+                //    dbContext.EmployeeQualification.Update(record);
+                //}
+
+            }
+            // dbContext.EmployeeQualification.AddRange(eq);
             return dbContext.SaveChanges();
 
         }
@@ -145,10 +256,11 @@ namespace TalentNode.Infrastructure.Repositories
                       q => q.QualificationID,
                       (eq, q) => new EducationDetail
                       {
-                          Degree = q.QualificationName ?? "",
+                          degEmpId= employee.EmployeeID,
+                          Degree = q.QualificationID ,
                           Institution = eq.Institute ?? "",
                           Year = Convert.ToInt32(eq.PassingYesr ?? "0"),
-                          Percentage = 0
+                          Percentage = (double)eq.Percentage_CGPA,
                       }).ToList();
 
             var experience = dbContext.EmployeeExperiences
@@ -158,12 +270,14 @@ namespace TalentNode.Infrastructure.Repositories
                       ex => ex.ExperienceID,
                       (exMap, ex) => new ExperienceDetail
                       {
+                          EmployeeID=exMap.EmployeeID,
+                          ExperienceId=ex.ExperienceID,
                           Company = ex.OrganizationName ?? "",
-                          Position = employee.CurrentPosition ?? "",
+                          Position = ex.position ?? "",
                           StartDate = ex.FromDate.ToString("yyyy-MM"),
                           EndDate = ex.ToDate != DateTime.MinValue ? ex.ToDate.ToString("yyyy-MM") : "",
                           Current = ex.ToDate == DateTime.MinValue,
-                          Description = ""
+                          Description = ex.workDescription
                       }).ToList();
 
             var skills = dbContext.EmployeeSkill
@@ -172,8 +286,8 @@ namespace TalentNode.Infrastructure.Repositories
                       es => es.SkillID,
                       sm => sm.SkillID,
                       (es, sm) => new SkillDetail
-                      {
-                          Name = sm.SkillName ?? "",
+                      {skillEmpId=es.EmployeeID,
+                          Name = sm.SkillID ,
                           Level = es.level ?? ""
                       }).ToList();
 
@@ -188,9 +302,13 @@ namespace TalentNode.Infrastructure.Repositories
                 CurrentPosition = employee.CurrentPosition ?? "",
                 CurrentCompany = employee.WorkingLocation ?? "",
                 ExpectedSalary = decimal.TryParse(employee.ExpectedSalary ?? "0", out var sal) ? sal : 0,
+                CurrentSalary=employee.CurrentSalary??"",
                 Avatar = avatar,
                 Resume = resume,
-                Location = districtName + ", " + stateName,
+                Bio=employee.Professional_Summary,
+                stateid = employee.StateID,
+                districtId=employee.DistrictID,
+                Location = employee.WorkingLocation,//districtName + ", " + stateName,
                 Education = education,
                 Experience = experience,
                 Skills = skills,

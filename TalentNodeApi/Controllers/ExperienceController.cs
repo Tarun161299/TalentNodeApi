@@ -11,7 +11,7 @@ namespace TalentNodeApi.Controllers
     public class ExperienceController(ISender sender) : ControllerBase
     {
         [HttpPost("SaveExperience")]
-        public async Task<int> AddExperienceAsync([FromBody] ExperienceModel user)
+        public async Task<int> AddExperienceAsync([FromBody] List<ExperienceModel> user)
         {
             try
             {

@@ -10,7 +10,7 @@ using TalentNode.Domain.Models;
 
 namespace TalentNode.Application.command
 {
-    public record ExperienceCommand(ExperienceModel Employee) : IRequest<int>;
+    public record ExperienceCommand(List<ExperienceModel> Employee) : IRequest<int>;
     public class ExperienceCommandHandler(IEmployeeRepository iemployeeRepository) : IRequestHandler<ExperienceCommand, int>
     {
         public async Task<int> Handle(ExperienceCommand request, CancellationToken cancellationToken)

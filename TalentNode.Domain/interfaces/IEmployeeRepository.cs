@@ -12,15 +12,17 @@ namespace TalentNode.Domain.interfaces
     public interface IEmployeeRepository
     {
         public Task<IEnumerable<EmployeEntity>> GetEmployees();
-        public Task<EmployeEntity> AddEmployeeAsync(EmployeEntity EmployeEntity);
+        public Task<int> AddEmployeeAsync(SaveEmployee EmployeEntity);
         public Task<List<Get_All_Employee_Data>> Get_All_Employee_Data();
 
         public Task<DocumentDetails> GetDocumentByID(int EmployeeID);
 
-        public Task<int> AddExperienceAsync(ExperienceModel EmployeEntity);
+        public Task<int> AddExperienceAsync(List<ExperienceModel> EmployeEntity);
 
         public Task<int> AddEducationAsync(List<EducationModel> EmployeeQualification);
 
         public Task<UserProfile> GetEmployeeDetails(int emplyeeid);
+
+        public Task<int> AddskillsAsync(List<SkillAdd> EmployeEntity);
     }
 }

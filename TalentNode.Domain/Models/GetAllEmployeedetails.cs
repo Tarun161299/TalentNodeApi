@@ -23,9 +23,14 @@ namespace TalentNode.Domain.Models
             public string Bio { get; set; }
             public string Location { get; set; }
 
+            public int? stateid { get; set; }
+            public int? districtId { get; set; }
+
             // Job Info
             public string CurrentPosition { get; set; }
             public string CurrentCompany { get; set; }
+
+            public string CurrentSalary{ get; set; }
             public decimal ExpectedSalary { get; set; }
             public int NoticePeriod { get; set; }
 
@@ -45,7 +50,9 @@ namespace TalentNode.Domain.Models
 
         public class EducationDetail
         {
-            public string Degree { get; set; }
+            
+                 public int degEmpId { get; set; }
+            public int Degree { get; set; }
             public string Institution { get; set; }
             public int Year { get; set; }
             public double Percentage { get; set; }
@@ -53,6 +60,8 @@ namespace TalentNode.Domain.Models
 
         public class ExperienceDetail
         {
+            public int EmployeeID { get; set; }
+            public int ExperienceId { get; set; }
             public string Company { get; set; }
             public string Position { get; set; }
             public string StartDate { get; set; }  // e.g. "2022-01"
@@ -63,7 +72,8 @@ namespace TalentNode.Domain.Models
 
         public class SkillDetail
         {
-            public string Name { get; set; }
+            public int skillEmpId { get; set; }
+            public int Name { get; set; }
             public string Level { get; set; }
         }
 

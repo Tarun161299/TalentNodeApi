@@ -31,9 +31,16 @@ namespace TalentNodeApi.Controllers
             var result = await sender.Send(new StateCommand());
             return result;
         }
-        // GET api/<MDController>/5
-        
 
-        
+        [HttpGet("Qualification")]
+        public async Task<List<MDQualification>> GetQualification()
+        {
+            var result = await sender.Send(new MDQualCommand());
+            return result;
+        }
+        // GET api/<MDController>/5
+
+
+
     }
 }

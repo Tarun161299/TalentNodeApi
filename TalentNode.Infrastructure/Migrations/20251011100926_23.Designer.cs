@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TalentNode.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TalentNode.Infrastructure.Data;
 namespace TalentNode.Infrastructure.Migrations
 {
     [DbContext(typeof(TalentNodeDbContext))]
-    partial class TalentNodeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251011100926_23")]
+    partial class _23
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,9 +132,6 @@ namespace TalentNode.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeID"));
 
-                    b.Property<string>("CurrentCompany")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CurrentPosition")
                         .HasColumnType("nvarchar(max)");
 
@@ -230,9 +230,6 @@ namespace TalentNode.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Percentage_CGPA")
-                        .HasColumnType("decimal(18,2)");
-
                     b.HasKey("EmpID", "QualID");
 
                     b.ToTable("EmployeeQualification");
@@ -280,9 +277,6 @@ namespace TalentNode.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("position")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("workDescription")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ExperienceID");

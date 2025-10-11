@@ -14,5 +14,7 @@ namespace TalentNode.Domain.interfaces
         public Task<List<MdDistrict>> GetAllDistrict();
 
         public Task<List<MdState>> GetAllState();
+
+        public Task<List<MDQualification>> GetAllQualification();
     }
 }
