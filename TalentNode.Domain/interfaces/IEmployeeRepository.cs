@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TalentNode.Domain.Entities;
 using TalentNode.Domain.Models;
+using TalentNode.Domain.Models.TalentNode.Domain.Models;
 using TalentNode.Domain.Models.YourNamespace.Models;
 
 namespace TalentNode.Domain.interfaces
@@ -24,5 +25,7 @@ namespace TalentNode.Domain.interfaces
         public Task<UserProfile> GetEmployeeDetails(int emplyeeid);
 
         public Task<int> AddskillsAsync(List<SkillAdd> EmployeEntity);
+
+        public Task<int> AddDocumentAsync(EmployeeDocumentModel model);
     }
 }

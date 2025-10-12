@@ -9,7 +9,7 @@ namespace TalentNode.Domain.Models
     public class EducationModel
     {
         public int degEmpId {  get; set; }
-        public string degree { get; set; }
+        public int degree { get; set; }
         public string Institution { get; set; }
 
         public decimal? Percentage { get; set; }

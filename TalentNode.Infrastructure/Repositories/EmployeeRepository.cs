@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using TalentNode.Domain.Entities;
 using TalentNode.Domain.interfaces;
 using TalentNode.Domain.Models;
+using TalentNode.Domain.Models.TalentNode.Domain.Models;
 using TalentNode.Domain.Models.YourNamespace.Models;
 using TalentNode.Infrastructure.Data;
 
@@ -52,10 +53,79 @@ namespace TalentNode.Infrastructure.Repositories
            return dbContext.SaveChanges();
 
         }
+
+        public async Task<int> AddDocumentAsync(EmployeeDocumentModel model)
+        {
+            if (model == null || model.EmployeeID <= 0)
+                return 0;
+
+            // Fetch the employee record
+            if (model.Mode == "R")
+            {
+
+                var employee = dbContext.Employee.Where(x => x.EmployeeID == model.EmployeeID).FirstOrDefault();
+                if (employee == null){
+                    return 0;
+                }
+                var docavail= dbContext.Document.Where(x => x.DocumentID ==employee.ResumeID).FirstOrDefault();
+                if (docavail != null)
+                {
+                    docavail.IsRemoved = true;
+                    dbContext.Document.Update(docavail);
+                }
+                Document doc = new Document();
+                doc.UploadDate = DateTime.UtcNow;
+                doc.UpdatedBy = "Employee";
+                doc.FileContentBase64 = model.FileContentBase64;
+                doc.DocName = model.DocName;
+                doc.FileName = model.FileName;
+                doc.CreatedBy = "Employee";
+                doc.FileType = model.FileType;
+                doc.Link = "";
+                dbContext.Document.Add(doc);
+                dbContext.SaveChanges();
+                employee.ResumeID = doc.DocumentID;
+                dbContext.Employee.Update(employee);
+
+            }
+            if (model.Mode == "P")
+            {
+
+                var employee = dbContext.Employee.Where(x => x.EmployeeID == model.EmployeeID).FirstOrDefault();
+                if (employee == null)
+                {
+                    return 0;
+                }
+                var docavail = dbContext.Document.Where(x => x.DocumentID == employee.EmpImageID).FirstOrDefault();
+                if (docavail != null)
+                {
+                    docavail.IsRemoved = true;
+                    dbContext.Document.Update(docavail);
+                }
+                Document doc = new Document();
+                doc.UploadDate = DateTime.UtcNow;
+                doc.UpdatedBy = "Employee";
+                doc.FileContentBase64 = model.FileContentBase64;
+                doc.DocName = model.DocName;
+                doc.FileName = model.FileName;
+                doc.FileType = model.FileType;
+                doc.CreatedBy = "Employee";
+                doc.Link = "";
+                dbContext.Document.Add(doc);
+                dbContext.SaveChanges();
+                employee.EmpImageID = doc.DocumentID;
+                dbContext.Employee.Update(employee);
+
+            }
+
+            // Save changes
+            return dbContext.SaveChanges();
+
+        }
         public async Task<List<Get_All_Employee_Data>> Get_All_Employee_Data()
         {
             var employeeDetails = (from e in dbContext.Employee
-                                   join d in dbContext.DistrictMaster on e.EmployeeID equals d.DistrictID
+                                   join d in dbContext.DistrictMaster on e.DistrictID equals d.DistrictID
                                    join s in dbContext.StateMaster on e.StateID equals s.StateID
 
                                    select new Get_All_Employee_Data
@@ -69,7 +139,7 @@ namespace TalentNode.Infrastructure.Repositories
                                        Email = e.Email,
                                        Phone = e.Phone,
                                        EmpImage = dbContext.Document
-                        .Where(es => es.DocumentID == e.EmpImageID)
+                        .Where(es => es.DocumentID == e.EmpImageID && es.IsRemoved==false)
                         .Select(es => es.FileContentBase64)   // string or byte[]
                         .FirstOrDefault(),
                                        Emp_Skills = (from es in dbContext.EmployeeSkill
@@ -97,6 +167,7 @@ namespace TalentNode.Infrastructure.Repositories
             var document = await (from emp in dbContext.Employee
                                   join d in dbContext.Document
                                   on emp.ResumeID equals d.DocumentID
+                                  where d.IsRemoved==false
                                   select new DocumentDetails
                                   {
                                       DocumentID = d.DocumentID,
@@ -183,7 +254,7 @@ namespace TalentNode.Infrastructure.Repositories
                 //{
                     EmployeeQualification record = new EmployeeQualification();
                     record.EmpID = item.degEmpId;
-                    record.QualID =Convert.ToInt32(item.degree);
+                    record.QualID =item.degree;
                     record.Institute = item.Institution;
                     record.PassingYesr = item.Year.ToString();
                 record.Percentage_CGPA = item.Percentage;
@@ -244,8 +315,8 @@ namespace TalentNode.Infrastructure.Repositories
             var employee = dbContext.Employee.FirstOrDefault(e => e.EmployeeID == emplyeeid);
             if (employee == null) return null;
 
-            var avatar = dbContext.Document.FirstOrDefault(d => d.DocumentID == employee.EmpImageID)?.Link ?? "";
-            var resume = dbContext.Document.FirstOrDefault(d => d.DocumentID == employee.ResumeID)?.Link ?? "";
+            var avatar = dbContext.Document.FirstOrDefault(d => d.DocumentID == employee.EmpImageID)?.FileContentBase64 ?? "";
+            var resume = dbContext.Document.FirstOrDefault(d => d.DocumentID == employee.ResumeID)?.FileContentBase64 ?? "";
             var districtName = dbContext.DistrictMaster.FirstOrDefault(d => d.DistrictID == employee.DistrictID)?.DistrictName ?? "";
             var stateName = dbContext.StateMaster.FirstOrDefault(s => s.StateID == employee.StateID)?.StateName ?? "";
 

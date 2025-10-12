@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TalentNode.Application.command;
 using TalentNode.Domain.Entities;
 using TalentNode.Domain.Models;
+using TalentNode.Domain.Models.TalentNode.Domain.Models;
 using TalentNode.Domain.Models.YourNamespace.Models;
 
 namespace TalentNodeApi.Controllers
@@ -16,6 +17,13 @@ namespace TalentNodeApi.Controllers
         public async Task<IActionResult> AddEmployeeAsync([FromBody] SaveEmployee employee)
         {
             var result = await sender.Send(new AddEmployeeCommand(employee));
+            return Ok(result);
+        }
+
+        [HttpPost("saveDocument")]
+        public async Task<IActionResult> saveDocument([FromBody] EmployeeDocumentModel employee)
+        {
+            var result = await sender.Send(new EmployeeDocumentsCommand(employee));
             return Ok(result);
         }
 
