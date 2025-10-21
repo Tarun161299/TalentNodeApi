@@ -12,8 +12,8 @@ using TalentNode.Infrastructure.Data;
 namespace TalentNode.Infrastructure.Migrations
 {
     [DbContext(typeof(TalentNodeDbContext))]
-    [Migration("20251005112800_12")]
-    partial class _12
+    [Migration("20251005120621_1")]
+    partial class _1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

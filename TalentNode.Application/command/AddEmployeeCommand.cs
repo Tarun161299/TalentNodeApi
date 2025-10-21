@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 using MediatR;
 using TalentNode.Domain.Entities;
 using TalentNode.Domain.interfaces;
+using TalentNode.Domain.Models.YourNamespace.Models;
 
 namespace TalentNode.Application.command
 {
-    public record  AddEmployeeCommand(EmployeEntity Employee):IRequest<EmployeEntity>;
+    public record  AddEmployeeCommand(SaveEmployee Employee):IRequest<int>;
 
-    public class AddEmployeeCommandHandler(IEmployeeRepository iemployeeRepository) : IRequestHandler<AddEmployeeCommand, EmployeEntity>
+    public class AddEmployeeCommandHandler(IEmployeeRepository iemployeeRepository) : IRequestHandler<AddEmployeeCommand, int>
     {
-        public async Task<EmployeEntity> Handle(AddEmployeeCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(AddEmployeeCommand request, CancellationToken cancellationToken)
         {
             return await iemployeeRepository.AddEmployeeAsync(request.Employee);
         }

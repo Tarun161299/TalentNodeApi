@@ -26,5 +26,9 @@ namespace TalentNode.Domain.Entities
         public DateTime CreatedOn { get; set; } = DateTime.Now;
 
         public DateTime? UpdatedOn { get; set; }
+
+        public string? position { get; set; }
+
+        public string? workDescription { get; set; }
     }
 }

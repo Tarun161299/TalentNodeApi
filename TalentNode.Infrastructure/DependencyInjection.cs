@@ -10,13 +10,14 @@ namespace TalentNode.Infrastructure
     {
         public static IServiceCollection AddInfrastuctureDI(this IServiceCollection services)
         {
-            services.AddDbContext<TalentNodeDbContext>(options => { options.UseSqlServer("Server =SHIV\\SQLEXPRESS_2022;Database=TalentNode;Trusted_Connection=true; Encrypt=true; TrustServerCertificate=true;"); });
+            services.AddDbContext<TalentNodeDbContext>(options => { options.UseSqlServer("Server =DESKTOP-M4HOJNG;Database=TalentNode;Trusted_Connection=true; Encrypt=true; TrustServerCertificate=true;"); });
 
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IUserAuthenticationRepository, UserAuthenticationRepository>();
             services.AddScoped<IMdModuleRepository, ModulesByRoleRepository>();
             services.AddScoped<SignupInterface, SignupRepository>();
             services.AddScoped<UserProfileInterface, UserProfileRepository>();
+            services.AddScoped<IMdRepository, MdRepository>();
             return services;
         }
     }

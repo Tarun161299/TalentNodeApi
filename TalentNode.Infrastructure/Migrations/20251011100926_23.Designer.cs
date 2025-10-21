@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TalentNode.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TalentNode.Infrastructure.Data;
 namespace TalentNode.Infrastructure.Migrations
 {
     [DbContext(typeof(TalentNodeDbContext))]
-    partial class TalentNodeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251011100926_23")]
+    partial class _23
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,48 +24,6 @@ namespace TalentNode.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.DepartmentMaster", b =>
-                {
-                    b.Property<int>("DepartmentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DepartmentId"));
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DepartmentName")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifiedBy")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("ModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("DepartmentId");
-
-                    b.ToTable("DepartmentMaster");
-                });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.DistrictMaster", b =>
                 {
@@ -171,9 +132,6 @@ namespace TalentNode.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeID"));
 
-                    b.Property<string>("CurrentCompany")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CurrentPosition")
                         .HasColumnType("nvarchar(max)");
 
@@ -272,9 +230,6 @@ namespace TalentNode.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("Percentage_CGPA")
-                        .HasColumnType("decimal(18,2)");
-
                     b.HasKey("EmpID", "QualID");
 
                     b.ToTable("EmployeeQualification");
@@ -322,9 +277,6 @@ namespace TalentNode.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("position")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("workDescription")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ExperienceID");

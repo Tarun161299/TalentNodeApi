@@ -10,7 +10,7 @@ using TalentNode.Infrastructure.Data;
 
 namespace TalentNode.Infrastructure.Repositories
 {
-    public class MdRepository(TalentNodeDbContext dbContext) //: IMdModuleRepository
+    public class MdRepository(TalentNodeDbContext dbContext) : IMdRepository
     {
         public async Task<List<MdState>> GetAllState()
         {
@@ -28,13 +28,38 @@ namespace TalentNode.Infrastructure.Repositories
         {
             var District = dbContext.DistrictMaster;
             var mddistrict = from d in District
-                         select new MdDistrict
-                         {
-                             districtId = d.DistrictID,
-                             name = d.DistrictName,
-                             stateId=d.StateID
-                         };
+                             select new MdDistrict
+                             {
+                                 districtId = d.DistrictID,
+                                 name = d.DistrictName,
+                                 stateId = d.StateID
+                             };
             return mddistrict.ToList();
+        }
+
+        public async Task<List<Skills>> GetAllSkills()
+        {
+            var skillMaster = dbContext.SkillMaster;
+            var mdSkill = from d in skillMaster
+                          select new Skills
+                          {
+                                 SkillID = d.SkillID,
+                                 SkillName = d.SkillName
+                                
+                             };
+            return mdSkill.ToList();
+        }
+        public async Task<List<MDQualification>> GetAllQualification()
+        {
+            var QualificationMaster = dbContext.QualificationMaster;
+            var mdQualificationMaster = from d in QualificationMaster
+                          select new MDQualification
+                          {
+                              QualID = d.QualificationID,
+                              QualificationName = d.QualificationName
+
+                          };
+            return mdQualificationMaster.ToList();
         }
 
 

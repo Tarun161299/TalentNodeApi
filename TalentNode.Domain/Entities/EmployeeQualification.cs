@@ -15,5 +15,7 @@ namespace TalentNode.Domain.Entities
         public string Institute { get; set; }
 
         public string PassingYesr { get; set; }
+
+        public decimal? Percentage_CGPA { get; set; }
     }
 }

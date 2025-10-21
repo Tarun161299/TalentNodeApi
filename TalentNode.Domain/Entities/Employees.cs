@@ -20,11 +20,11 @@ namespace TalentNode.Domain.Entities
         public int UserID { get; set; }
 
         [MaxLength(100)]
-        public string LastName { get; set; } 
+        public string LastName { get; set; }
 
         [Required, MaxLength(150)]
         public string Email { get; set; }
-       
+
         public float? Experience { get; set; }
         [MaxLength(15)]
         public string Phone { get; set; }
@@ -37,7 +37,9 @@ namespace TalentNode.Domain.Entities
         public int? DistrictID { get; set; }
         public DistrictMaster? District { get; set; }
 
-        public string? WorkingLocation {get; set;}
+        public string? WorkingLocation { get; set; }
+
+        public string? CurrentCompany { get; set; }
         public string? CurrentPosition { get; set; }
 
         public string? ExpectedSalary { get; set; }
@@ -47,7 +49,9 @@ namespace TalentNode.Domain.Entities
 
         public int? EmpImageID { get; set; }
 
+        public string? Professional_Summary { get; set; }
 
-        
+
+
     }
 }
