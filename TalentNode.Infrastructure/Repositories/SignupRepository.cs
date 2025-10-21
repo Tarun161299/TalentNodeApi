@@ -14,7 +14,7 @@ using TalentNode.Infrastructure.Data;
 
 namespace TalentNode.Infrastructure.Repositories
 {
-    public class SignupRepository (TalentNodeDbContext dbContext):SignupInterface
+    public class SignupRepository(TalentNodeDbContext dbContext) : SignupInterface
     {
         public async Task<int> SaveSignup(TalentNode.Domain.Models.SignupDetailsModel signup)
         {
@@ -28,19 +28,19 @@ namespace TalentNode.Infrastructure.Repositories
             userDetails.Updated_On = DateTime.Now;
             TalentNode.Domain.Entities.Employee employee = new TalentNode.Domain.Entities.Employee();
             employee.Email = signup.Email;
-            employee.FirstName = signup.Name.Split(" ").Count()>=1? signup.Name.Split(" ")[0]: signup.Name;
-            if(signup.Name.Split(" ").Length > 1)
+            employee.FirstName = signup.Name.Split(" ").Count() >= 1 ? signup.Name.Split(" ")[0] : signup.Name;
+            if (signup.Name.Split(" ").Length > 1)
             {
-                string[] nameArr = new string[signup.Name.Split(" ").Length - 1];// signup.Name.Split(" ");
-                employee.LastName = string.Join(" ", nameArr);
+                
+                employee.LastName = GetNameWithoutFirstWord(signup.Name);
             }
             else
             {
                 employee.LastName = " ";
             }
-            employee.Phone= signup.PhoneNumber;
+            employee.Phone = signup.PhoneNumber;
             TalentNode.Domain.Entities.UserRoleMapping userRoleMapping = new TalentNode.Domain.Entities.UserRoleMapping();
-            
+
             dbContext.UserDetails.Add(userDetails);
             dbContext.SaveChanges();
             employee.UserID = userDetails.UserID;
@@ -49,7 +49,21 @@ namespace TalentNode.Infrastructure.Repositories
             userRoleMapping.RoleId = 4;
             dbContext.UserRoleMapping.Add(userRoleMapping);
 
-            return  dbContext.SaveChanges(); 
+            return dbContext.SaveChanges();
+        }
+
+        public static string GetNameWithoutFirstWord(string fullName)
+        {
+            if (string.IsNullOrWhiteSpace(fullName))
+                return string.Empty;
+
+            var parts = fullName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts.Length <= 1)
+                return string.Empty;
+
+            // Join all words except the first one
+            return string.Join(" ", parts.Skip(1));
         }
     }
 }

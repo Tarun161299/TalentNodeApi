@@ -25,6 +25,8 @@ namespace TalentNode.Infrastructure.Data
         public DbSet<Experience> Experience { get; set; }
         public DbSet<EmployeeQualification> EmployeeQualification { get; set; }
         public DbSet<EmployeeExperiences> EmployeeExperiences { get; set; }
+        public DbSet<DepartmentMaster> DepartmentMaster { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MdMainModule>()
