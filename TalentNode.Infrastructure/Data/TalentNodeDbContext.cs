@@ -26,7 +26,20 @@ namespace TalentNode.Infrastructure.Data
         public DbSet<EmployeeQualification> EmployeeQualification { get; set; }
         public DbSet<EmployeeExperiences> EmployeeExperiences { get; set; }
         public DbSet<DepartmentMaster> DepartmentMaster { get; set; }
+
+        public DbSet<Company> Company { get; set; }
+
+        public DbSet<HRdetails> HRdetails { get; set; }
+
+        public DbSet<HRCompany> HRCompany { get; set; }
+        public DbSet<JobDetails> JobDetails { get; set; }
+        public DbSet<JobBenefits> JobBenefits { get; set; }
+        public DbSet<JobSkills> JobSkills { get; set; }
+        public DbSet<BenefitMaster> BenefitMaster { get; set; }
+        public DbSet<JobType> JobType { get; set; }
         
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MdMainModule>()
@@ -37,7 +50,12 @@ namespace TalentNode.Infrastructure.Data
             // Composite keys
             modelBuilder.Entity<EmployeeQualification>()
                 .HasKey(eq => new { eq.EmpID, eq.QualID });
-
+            modelBuilder.Entity<JobBenefits>()
+                .HasKey(eq => new { eq.jobId, eq.BenefitId });
+            modelBuilder.Entity<JobSkills>()
+               .HasKey(eq => new { eq.JobId, eq.skillId });
+            modelBuilder.Entity<HRCompany>()
+                .HasKey(eq => new { eq.HRId, eq.CompanyId });
             modelBuilder.Entity<UserRoleMapping>()
             .HasKey(ur => new { ur.UserName, ur.RoleId });
 

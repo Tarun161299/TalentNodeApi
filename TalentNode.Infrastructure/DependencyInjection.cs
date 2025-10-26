@@ -18,6 +18,7 @@ namespace TalentNode.Infrastructure
             services.AddScoped<SignupInterface, SignupRepository>();
             services.AddScoped<UserProfileInterface, UserProfileRepository>();
             services.AddScoped<IMdRepository, MdRepository>();
+            services.AddScoped<IJobRepository, JobRepository>();
             return services;
         }
     }

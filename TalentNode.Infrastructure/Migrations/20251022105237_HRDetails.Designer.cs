@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TalentNode.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TalentNode.Infrastructure.Data;
 namespace TalentNode.Infrastructure.Migrations
 {
     [DbContext(typeof(TalentNodeDbContext))]
-    partial class TalentNodeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251022105237_HRDetails")]
+    partial class HRDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,31 +24,6 @@ namespace TalentNode.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.BenefitMaster", b =>
-                {
-                    b.Property<int>("BenefitId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BenefitId"));
-
-                    b.Property<string>("BenefitName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<bool?>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.HasKey("BenefitId");
-
-                    b.ToTable("BenefitMaster");
-                });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.Company", b =>
                 {
@@ -447,121 +425,9 @@ namespace TalentNode.Infrastructure.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("HRId");
 
                     b.ToTable("HRdetails");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.JobBenefits", b =>
-                {
-                    b.Property<int>("jobId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BenefitId")
-                        .HasColumnType("int");
-
-                    b.HasKey("jobId", "BenefitId");
-
-                    b.ToTable("JobBenefits");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.JobDetails", b =>
-                {
-                    b.Property<int>("JobId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("JobId"));
-
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ApplicationEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CompanyID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Currency")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeadLine")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("District")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ExperienceLevel")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("JobDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("JobTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MaximumSalary")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MinimumSalary")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("NoOfOpenings")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("StateId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("Updateddate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("jobTypeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("JobId");
-
-                    b.ToTable("JobDetails");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.JobSkills", b =>
-                {
-                    b.Property<int>("JobId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("skillId")
-                        .HasColumnType("int");
-
-                    b.HasKey("JobId", "skillId");
-
-                    b.ToTable("JobSkills");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.JobType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("JobType");
                 });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.MDModule", b =>

@@ -43,26 +43,81 @@ namespace TalentNode.Infrastructure.Repositories
             var mdSkill = from d in skillMaster
                           select new Skills
                           {
-                                 SkillID = d.SkillID,
-                                 SkillName = d.SkillName
-                                
-                             };
+                              SkillID = d.SkillID,
+                              SkillName = d.SkillName
+
+                          };
             return mdSkill.ToList();
         }
         public async Task<List<MDQualification>> GetAllQualification()
         {
             var QualificationMaster = dbContext.QualificationMaster;
             var mdQualificationMaster = from d in QualificationMaster
-                          select new MDQualification
-                          {
-                              QualID = d.QualificationID,
-                              QualificationName = d.QualificationName
+                                        select new MDQualification
+                                        {
+                                            QualID = d.QualificationID,
+                                            QualificationName = d.QualificationName
 
-                          };
+                                        };
             return mdQualificationMaster.ToList();
         }
 
+        public async Task<List<BenefitsMasterModel>> GetAllBenefits()
+        {
+            var BenefitMaster = dbContext.BenefitMaster;
+            var mdBenefitMaster = from d in BenefitMaster
+                                  select new BenefitsMasterModel
+                                  {
+                                      BenefitId = d.BenefitId,
+                                      BenefitName = d.BenefitName
 
+                                  };
+            return mdBenefitMaster.ToList();
+        }
+
+        public async Task<List<CompanyModel>> GetCompaniesByHRID(int HrId)
+        {
+            var Company = dbContext.Company;
+            var MdCompany = from d in Company
+                            join hrc in dbContext.HRCompany on d.CompanyId equals hrc.CompanyId
+                            where hrc.HRId==HrId
+                                  select new CompanyModel
+                                  {
+                                      CompanyId = d.CompanyId,
+                                      CompanyName = d.CompanyName
+
+                                  };
+            return MdCompany.ToList();
+        }
+
+        public async Task<List<DepartmentModel>> GetDepartmentMaster()
+        {
+            var Company = dbContext.DepartmentMaster;
+            var DepartmentName = from d in Company
+                            
+                            select new DepartmentModel
+                            {
+                                DepartmentId = d.DepartmentId,
+                                DepartmentName = d.DepartmentName
+
+                            };
+            return DepartmentName.ToList();
+        }
+
+        public async Task<List<JobTypeModel>> GetJobType()
+        {
+            var JobType = dbContext.JobType;
+            var MdJobType = from d in JobType
+
+                            select new JobTypeModel
+                            {
+                                     Id = d.Id,
+                                     Description = d.Description,
+                                     Name=d.Name
+
+                                 };
+            return MdJobType.ToList();
+        }
     }
 
 }

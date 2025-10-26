@@ -28,6 +28,9 @@ namespace TalentNode.Infrastructure.Repositories
                                join emp in dbContext.Employee
                          on Usd.UserID equals emp.UserID into empGroup
                                from employee in empGroup.DefaultIfEmpty()
+                               join hr in dbContext.HRdetails
+                       on Usd.UserID equals hr.HRId into hrGroup
+                               from hrDetails in hrGroup.DefaultIfEmpty()
                                where Usd.EmailID.ToLower() == User.UserName.ToLower() && Usd.Password == User.Password
                                select new Models.UserLoginDetails
                                {
@@ -40,13 +43,13 @@ namespace TalentNode.Infrastructure.Repositories
                                    Updated_On = Usd.Updated_On,
                                    roleId = RM.RoleID,
                                    roleName = RM.Role,
-                                   Emp = employee.EmployeeID,
+                                   IdbyUserRole = RM.RoleID == 4 ? employee.EmployeeID : RM.RoleID == 3 ? hrDetails.HRId : null,
                                }).ToList();
             if (userDetails.Count() > 0)
             {
                 if (User.UserName.Trim().ToLower() == userDetails[0].EmailID.Trim().ToLower() && User.Password == userDetails[0].Password)
                 {
-                    var token = this.GenerateJwtToken(userDetails[0].roleId.ToString(), userDetails[0].roleName, userDetails[0].UserName, userDetails[0].EmailID, userDetails[0].Emp);
+                    var token = this.GenerateJwtToken(userDetails[0].roleId.ToString(), userDetails[0].roleName, userDetails[0].UserName, userDetails[0].EmailID, userDetails[0].IdbyUserRole);
                     return token;
                 }
                 else
@@ -77,9 +80,13 @@ namespace TalentNode.Infrastructure.Repositories
     };
 
             // ✅ Conditionally add EmpId if role is 4
-            if (Roleid == "4" && Emp.HasValue)
+            if (Roleid == "4")
             {
                 claims.Add(new Claim("EmpId", Emp.ToString()));
+            }
+            if (Roleid == "3")
+            {
+                claims.Add(new Claim("HRId", Emp.ToString()));
             }
 
             var tokenDescriptor = new SecurityTokenDescriptor

@@ -16,5 +16,11 @@ namespace TalentNode.Domain.interfaces
         public Task<List<MdState>> GetAllState();
 
         public Task<List<MDQualification>> GetAllQualification();
+
+        public Task<List<DepartmentModel>> GetDepartmentMaster();
+        public Task<List<CompanyModel>> GetCompaniesByHRID(int HrId);
+        public Task<List<BenefitsMasterModel>> GetAllBenefits();
+
+        public Task<List<JobTypeModel>> GetJobType();
     }
 }
