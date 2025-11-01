@@ -272,6 +272,38 @@ namespace TalentNode.Infrastructure.Repositories
 
             return jobs;
         }
+
+        public async Task<List<JobListDto>> ViewJobs()
+        {
+            var jobs = (from j in _context.JobDetails
+                        join
+                       dept in _context.DepartmentMaster on j.DepartmentId equals dept.DepartmentId
+                        join c in _context.Company on j.CompanyID equals c.CompanyId
+                        join hc in _context.HRCompany on c.CompanyId equals hc.CompanyId
+                        join jt in _context.JobType on j.jobTypeId equals jt.Id
+                        
+
+
+                        select new JobListDto
+                        {
+                            Id = j.JobId,
+                            Title = j.JobTitle,
+                            Department = dept.DepartmentName, // Map via DepartmentId later
+                            Location = j.Address,
+                            Description = j.JobDescription,
+                            Salary = JobRepository.FormatSalary(j.MinimumSalary, j.MaximumSalary, j.Currency),// j.MinimumSalary + " - " + j.MaximumSalary,
+                            Experience = j.ExperienceLevel,
+                            Type = jt.Name,
+                            ApplicantCount = 0,
+                            NewApplicants = 0,
+                            Interviews = 0,
+                            PostedDate = j.Created ?? DateTime.Now,
+                            Status = "Active"
+                        }).ToList().DistinctBy(x => x.Id).ToList();
+            //.ToListAsync();
+
+            return jobs;
+        }
         // ✅ Helper: Format Salary based on currency
         public static string FormatSalary(string? min, string? max, string? currency)
         {
