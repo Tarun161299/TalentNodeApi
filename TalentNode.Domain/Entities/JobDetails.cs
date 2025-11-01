@@ -26,6 +26,7 @@ namespace TalentNode.Domain.Entities
 
         public int? NoOfOpenings { get; set; }
 
+
         public string? MinimumSalary { get; set; }
 
         public string? MaximumSalary { get; set; }
@@ -35,7 +36,7 @@ namespace TalentNode.Domain.Entities
         public string? ApplicationEmail { get; set; }
 
         public string? JobDescription { get; set; }
-
+        public string? JobLink { get; set; }
         public string? ExperienceLevel { get; set; }
 
         public int? DepartmentId { get;set; }

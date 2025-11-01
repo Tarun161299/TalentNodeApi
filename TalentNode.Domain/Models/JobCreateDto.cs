@@ -8,6 +8,7 @@ namespace TalentNode.Domain.Models
 {
     public  class JobCreateDto
     {
+        public int? JobId { get;set; }
         public string Title { get; set; }
         public int Company { get; set; }
         public int Department { get; set; }
@@ -19,11 +20,11 @@ namespace TalentNode.Domain.Models
         public string SalaryCurrency { get; set; }
         public string Description { get; set; }
         public string ExperienceLevel { get; set; }
-        public string Category { get; set; }
+        public string? Category { get; set; }
         public List<int> Benefits { get; set; }
         public List<int> Skills { get; set; }
-        public string ApplicationLink { get; set; }
+        public string? ApplicationLink { get; set; }
         public string ContactEmail { get; set; }
-        public DateTime ApplicationDeadline { get; set; }
+        public DateTime? ApplicationDeadline { get; set; }
     }
 }

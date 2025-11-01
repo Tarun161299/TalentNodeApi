@@ -13,6 +13,7 @@ namespace TalentNode.Domain.Models
         public string? Status { get; set; } 
         public string? Department { get; set; }
         public string? Location { get; set; }
+        public string[]? Skills { get; set; }
         public string? Description { get; set; }
         public string? Salary { get; set; }
         public string? Experience { get; set; }
