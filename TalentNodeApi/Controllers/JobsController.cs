@@ -16,5 +16,12 @@ namespace TalentNodeApi.Controllers
             var result = await sender.Send(new CreateJobCommand(job));
             return result;
         }
+
+        [HttpGet("GetJobsHr")]
+        public async Task<List<JobListDto>> GetJobs(int hrid)
+        {
+            var result = await sender.Send(new JobListHrCommand(hrid));
+            return result;
+        }
     }
 }

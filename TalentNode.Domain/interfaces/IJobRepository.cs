@@ -11,5 +11,6 @@ namespace TalentNode.Domain.interfaces
     public interface IJobRepository
     {
         public Task<int> SaveJob(JobCreateDto dto);
+        public  Task<List<JobListDto>> GetJobs(int hrid);
     }
 }
