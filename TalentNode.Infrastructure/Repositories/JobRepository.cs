@@ -309,6 +309,7 @@ namespace TalentNode.Infrastructure.Repositories
                         join hc in _context.HRCompany on c.CompanyId equals hc.CompanyId
                         join jt in _context.JobType on j.jobTypeId equals jt.Id
                         
+                        
 
 
                         select new JobListForEmployee
@@ -321,6 +322,10 @@ namespace TalentNode.Infrastructure.Repositories
                             Salary = JobRepository.FormatSalary(j.MinimumSalary, j.MaximumSalary, j.Currency),// j.MinimumSalary + " - " + j.MaximumSalary,
                             Experience = j.ExperienceLevel,
                             Type = jt.Name,
+                            Skills = (from js in _context.JobSkills
+                                      join sm in _context.SkillMaster on js.skillId equals sm.SkillID
+                                      where js.JobId == j.JobId
+                                      select sm.SkillName).ToList().ToArray(),
                             ApplicantCount = 0,
                             NewApplicants = 0,
                             Interviews = 0,
