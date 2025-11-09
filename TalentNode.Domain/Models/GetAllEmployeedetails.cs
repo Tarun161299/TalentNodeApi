@@ -91,6 +91,9 @@ namespace TalentNode.Domain.Models
 
             public DateTime? ApplyDate { get; set; }
 
+            public int TotalRecords { get; set; }
+            public int TotalPages { get; set; }
+
         }
 
         public class EducationDetail

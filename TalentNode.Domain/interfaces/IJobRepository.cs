@@ -16,5 +16,7 @@ namespace TalentNode.Domain.interfaces
         public  Task<List<JobListForEmployee>> ViewJobs(int empId);
 
         public Task<int> ApplyForJob(ApplyForJob dto);
+
+        public Task<int> UpdateStatusOfEmployee(ApplyForJob dto);
     }
 }
