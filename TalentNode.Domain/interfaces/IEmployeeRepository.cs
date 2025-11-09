@@ -23,7 +23,7 @@ namespace TalentNode.Domain.interfaces
         public Task<int> AddEducationAsync(List<EducationModel> EmployeeQualification);
 
         public Task<UserProfile> GetEmployeeDetails(int emplyeeid);
-
+        public Task<List<ApplicantProfile>> GetApplicantProfile(ApplicantModel ammd);
         public Task<int> AddskillsAsync(List<SkillAdd> EmployeEntity);
 
         public Task<int> AddDocumentAsync(EmployeeDocumentModel model);

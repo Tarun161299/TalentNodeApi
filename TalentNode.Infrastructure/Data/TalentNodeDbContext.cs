@@ -37,7 +37,11 @@ namespace TalentNode.Infrastructure.Data
         public DbSet<JobSkills> JobSkills { get; set; }
         public DbSet<BenefitMaster> BenefitMaster { get; set; }
         public DbSet<JobType> JobType { get; set; }
-        
+
+        public DbSet<CandidateStatusMaster> CandidateStatusMaster { get; set; }
+
+        public DbSet<JobApplicationCandidate> JobApplicationCandidate { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -46,6 +50,8 @@ namespace TalentNode.Infrastructure.Data
      .HasKey(m => new { m.Roleid, m.MainModuleID });
             modelBuilder.Entity<MdRoleModule>()
   .HasKey(m => new { m.MainModuleID, m.ModuleID });
+            modelBuilder.Entity<JobApplicationCandidate>()
+        .HasKey(c => new { c.CandidateId, c.JobId });
 
             // Composite keys
             modelBuilder.Entity<EmployeeQualification>()

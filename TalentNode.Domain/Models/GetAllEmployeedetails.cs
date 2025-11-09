@@ -30,7 +30,7 @@ namespace TalentNode.Domain.Models
             public string CurrentPosition { get; set; }
             public string CurrentCompany { get; set; }
 
-            public string CurrentSalary{ get; set; }
+            public string CurrentSalary { get; set; }
             public decimal ExpectedSalary { get; set; }
             public int NoticePeriod { get; set; }
 
@@ -46,6 +46,51 @@ namespace TalentNode.Domain.Models
             public List<string> Languages { get; set; } = new();
 
             public SocialLinks SocialLinks { get; set; } = new();
+
+        }
+
+        public class ApplicantProfile
+        {
+            public int Id { get; set; }
+
+            // Basic Info
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Email { get; set; }
+            public string Phone { get; set; }
+            public string Bio { get; set; }
+            public string Location { get; set; }
+
+            public int? stateid { get; set; }
+            public int? districtId { get; set; }
+
+            // Job Info
+            public string CurrentPosition { get; set; }
+            public string CurrentCompany { get; set; }
+
+            public string CurrentSalary { get; set; }
+            public decimal ExpectedSalary { get; set; }
+            public int NoticePeriod { get; set; }
+
+            // Media
+            public string Avatar { get; set; }
+            public string Resume { get; set; }
+
+            // Collections
+            public List<EducationDetail> Education { get; set; } = new();
+            public List<ExperienceDetail> Experience { get; set; } = new();
+            public List<SkillDetailApplicant> Skills { get; set; } = new();
+
+            public List<string> Languages { get; set; } = new();
+
+            public SocialLinks SocialLinks { get; set; } = new();
+
+            public string? ApplicantStatus { get; set; }
+
+            public int? ApplicantStatusID { get; set; }
+
+            public DateTime? ApplyDate { get; set; }
+
         }
 
         public class EducationDetail
@@ -74,9 +119,19 @@ namespace TalentNode.Domain.Models
         {
             public int skillEmpId { get; set; }
             public int Name { get; set; }
+
+            
             public string Level { get; set; }
         }
 
+        public class SkillDetailApplicant
+        {
+            public int skillEmpId { get; set; }
+            public string? Name { get; set; }
+
+
+            public string Level { get; set; }
+        }
         public class SocialLinks
         {
             public string Linkedin { get; set; }

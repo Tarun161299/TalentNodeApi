@@ -54,5 +54,12 @@ namespace TalentNodeApi.Controllers
             var result = await sender.Send(new AddSkillsDetailsCommand(SkillAdd));
             return result;
         }
+
+        [HttpPost("GetApllicantList")]
+        public async Task<List<ApplicantProfile>> GetApllicantList(ApplicantModel Appm)
+        {
+            var result = await sender.Send(new ApplicantListCommand(Appm));
+            return result;
+        }
     }
 }

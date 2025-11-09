@@ -195,6 +195,33 @@ namespace TalentNode.Infrastructure.Repositories
             }
         }
 
+        public async Task<int> ApplyForJob(ApplyForJob dto)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                JobApplicationCandidate jb = new JobApplicationCandidate();
+                jb.JobId = dto.JobId;
+                jb.CandidateId = dto.CandidateId;
+                jb.AppliedDate = DateTime.UtcNow;
+                jb.Status = dto.Status;
+                jb.CreatedBy = dto.CreatedBy;
+
+
+                _context.JobApplicationCandidate.Add(jb);
+                int result = await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                // Optionally log ex.Message here
+                return 0;
+            }
+        }
+
         public async Task<JobCreateDto> GetJobById(int jobId)
         {
             try
@@ -273,7 +300,7 @@ namespace TalentNode.Infrastructure.Repositories
             return jobs;
         }
 
-        public async Task<List<JobListDto>> ViewJobs()
+        public async Task<List<JobListForEmployee>> ViewJobs(int EmpId)
         {
             var jobs = (from j in _context.JobDetails
                         join
@@ -284,7 +311,7 @@ namespace TalentNode.Infrastructure.Repositories
                         
 
 
-                        select new JobListDto
+                        select new JobListForEmployee
                         {
                             Id = j.JobId,
                             Title = j.JobTitle,
@@ -298,7 +325,8 @@ namespace TalentNode.Infrastructure.Repositories
                             NewApplicants = 0,
                             Interviews = 0,
                             PostedDate = j.Created ?? DateTime.Now,
-                            Status = "Active"
+                            Status = "Active",
+                            employeeStatusForJob= _context.JobApplicationCandidate.Where(x=>x.CandidateId==EmpId && x.JobId==j.JobId).FirstOrDefault()==null?"0": _context.JobApplicationCandidate.Where(x => x.CandidateId == EmpId && x.JobId == j.JobId).FirstOrDefault().Status
                         }).ToList().DistinctBy(x => x.Id).ToList();
             //.ToListAsync();
 
