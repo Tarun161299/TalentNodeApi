@@ -395,6 +395,11 @@ namespace TalentNode.Infrastructure.Repositories
 
         public async Task<List<ApplicantProfile>> GetApplicantProfile(ApplicantModel ammd)
         {
+            int totalRecords = await dbContext.JobApplicationCandidate
+    .Where(jb => jb.JobId == ammd.JobId)
+    .CountAsync();
+
+            int totalPages = (int)Math.Ceiling((double)totalRecords / ammd.PageSize);
             List<ApplicantProfile> result = new List<ApplicantProfile>();
             var data = dbContext.JobApplicationCandidate
                        .Where(jb => jb.JobId == ammd.JobId)
@@ -403,7 +408,8 @@ namespace TalentNode.Infrastructure.Repositories
                        .Take(ammd.PageSize)
                        .Select(jb => jb.CandidateId)
                        .ToList();
-            foreach (var emplyeeid in data) {
+            foreach (var emplyeeid in data)
+            {
                 ApplicantProfile temp = new ApplicantProfile();
                 var employee = dbContext.Employee.FirstOrDefault(e => e.EmployeeID == emplyeeid);
                 if (employee == null) return null;
@@ -457,7 +463,7 @@ namespace TalentNode.Infrastructure.Repositories
                           }).ToList();
                 var ApplicantStatusId = dbContext.JobApplicationCandidate.Where(X => X.CandidateId == emplyeeid)?.FirstOrDefault()?.Status;
                 var ApplicantStatusDescription = dbContext.CandidateStatusMaster.Where(X => X.StatusId == int.Parse(ApplicantStatusId))?.FirstOrDefault()?.StatusName;
-                var Applydate= dbContext.JobApplicationCandidate.Where(X => X.CandidateId == emplyeeid)?.FirstOrDefault()?.AppliedDate;
+                var Applydate = dbContext.JobApplicationCandidate.Where(X => X.CandidateId == emplyeeid)?.FirstOrDefault()?.AppliedDate;
                 // build final UserProfile
                 var userProfile = new ApplicantProfile
                 {
@@ -481,9 +487,11 @@ namespace TalentNode.Infrastructure.Repositories
                     Skills = skills,
                     Languages = new List<string> { "English", "Hindi" },
                     SocialLinks = new SocialLinks { Linkedin = "", Github = "", Portfolio = "" },
-                    ApplicantStatus= ApplicantStatusDescription,
-                    ApplicantStatusID=int.Parse(ApplicantStatusId),
-                    ApplyDate= Applydate
+                    ApplicantStatus = ApplicantStatusDescription,
+                    ApplicantStatusID = int.Parse(ApplicantStatusId),
+                    ApplyDate = Applydate,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages
 
                 };
 

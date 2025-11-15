@@ -222,6 +222,41 @@ namespace TalentNode.Infrastructure.Repositories
             }
         }
 
+
+        public async Task<int> UpdateStatusOfEmployee(ApplyForJob dto)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+
+                var jb = _context.JobApplicationCandidate.Where(x => x.JobId == dto.JobId && x.CandidateId == dto.CandidateId).FirstOrDefault();
+                if (jb != null)
+                {
+                   
+                    jb.Status = dto.Status;
+                    jb.CreatedBy = dto.CreatedBy;
+
+
+                    _context.JobApplicationCandidate.Update(jb);
+                    int result = await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return result;
+                }
+                else
+                {
+                    await transaction.RollbackAsync();
+                    // Optionally log ex.Message here
+                    return 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                // Optionally log ex.Message here
+                return 0;
+            }
+        }
         public async Task<JobCreateDto> GetJobById(int jobId)
         {
             try
