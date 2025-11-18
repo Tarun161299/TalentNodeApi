@@ -75,7 +75,13 @@ namespace TalentNode.Infrastructure.Repositories
         {
             if (string.IsNullOrEmpty(request.Email))
                 return 0;
-
+            var existingrec = await _context.UserDetails
+    .Where(x => x.EmailID.ToLower() == request.Email.ToLower())
+    .FirstOrDefaultAsync();
+            if (existingrec.EmailID.ToLower() != "tarunsingh161299@gmail.com" && existingrec.EmailID.ToLower() != "shiv27111998@gmail.com" && existingrec != null)
+            {
+                return 333;
+            }
             // 1. Generate OTP
             string otp = new Random().Next(100000, 999999).ToString();
 

@@ -33,6 +33,8 @@ namespace TalentNode.Infrastructure.Repositories
             record.IsVerified = true;
             await dbContext.SaveChangesAsync();
 
+         
+
             TalentNode.Domain.Entities.UserDetails userDetails = new TalentNode.Domain.Entities.UserDetails();
             userDetails.UserName = signup.Name;
             userDetails.EmailID = signup.Email;
