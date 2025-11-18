@@ -10,7 +10,7 @@ namespace TalentNode.Infrastructure
     {
         public static IServiceCollection AddInfrastuctureDI(this IServiceCollection services)
         {
-            services.AddDbContext<TalentNodeDbContext>(options => { options.UseSqlServer("Server =SHIV\\SQLEXPRESS_2022;Database=TalentNode;Trusted_Connection=true; Encrypt=true; TrustServerCertificate=true;"); });
+            services.AddDbContext<TalentNodeDbContext>(options => { options.UseSqlServer("Server=148.113.47.114,49884;Database=Jobworld;User Id=Jobworld4u;Password=Mahadevshivv!@12;Encrypt=true;TrustServerCertificate=true;"); });
 
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IUserAuthenticationRepository, UserAuthenticationRepository>();
