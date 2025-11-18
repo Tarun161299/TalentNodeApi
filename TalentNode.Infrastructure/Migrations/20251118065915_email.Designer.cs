@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TalentNode.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TalentNode.Infrastructure.Data;
 namespace TalentNode.Infrastructure.Migrations
 {
     [DbContext(typeof(TalentNodeDbContext))]
-    partial class TalentNodeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251118065915_email")]
+    partial class email
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -237,33 +240,6 @@ namespace TalentNode.Infrastructure.Migrations
                     b.HasKey("DocumentID");
 
                     b.ToTable("Document");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.EmailOTP", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ExpireAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("OTP")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EmailOTP");
                 });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.EmailTemplate", b =>

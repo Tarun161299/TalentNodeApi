@@ -38,6 +38,11 @@ namespace TalentNode.Infrastructure.Data
         public DbSet<BenefitMaster> BenefitMaster { get; set; }
         public DbSet<JobType> JobType { get; set; }
 
+        public DbSet<EmailTemplate> EmailTemplates { get; set; }
+
+        public DbSet<EmailOTP> EmailOTP { get; set; }
+        
+
         public DbSet<CandidateStatusMaster> CandidateStatusMaster { get; set; }
 
         public DbSet<JobApplicationCandidate> JobApplicationCandidate { get; set; }
