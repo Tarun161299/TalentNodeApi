@@ -24,10 +24,10 @@ namespace TalentNode.Infrastructure.Repositories
        .FirstOrDefaultAsync();
 
             if (record == null)
-                return 0;
+                return 1000;
 
             if (record.ExpireAt < DateTime.UtcNow)
-                return 0;
+                return 1000;
 
             // ✔ Mark email as verified
             record.IsVerified = true;
