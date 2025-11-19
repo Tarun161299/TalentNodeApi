@@ -78,7 +78,9 @@ namespace TalentNode.Infrastructure.Repositories
             var existingrec = await _context.UserDetails
     .Where(x => x.EmailID.ToLower() == request.Email.ToLower())
     .FirstOrDefaultAsync();
-            if (existingrec.EmailID.ToLower() != "tarunsingh161299@gmail.com" && existingrec.EmailID.ToLower() != "shiv27111998@gmail.com" && existingrec != null)
+            if (existingrec != null &&
+     !string.Equals(existingrec.EmailID, "tarunsingh161299@gmail.com", StringComparison.OrdinalIgnoreCase) &&
+     !string.Equals(existingrec.EmailID, "shiv27111998@gmail.com", StringComparison.OrdinalIgnoreCase))
             {
                 return 333;
             }
