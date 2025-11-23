@@ -3,17 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MailKit.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
 using TalentNode.Domain.Entities;
 using TalentNode.Domain.interfaces;
 using TalentNode.Domain.Models;
 using TalentNode.Infrastructure.Data;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using static System.Net.WebRequestMethods;
 
 namespace TalentNode.Infrastructure.Repositories
 {
-    public class JobRepository(TalentNodeDbContext _context) : IJobRepository
+    public class JobRepository: IJobRepository
     {
+        private readonly TalentNodeDbContext _context;
+        private readonly IConfiguration _config;
+
+        public JobRepository(TalentNodeDbContext context, IConfiguration config)
+        {
+            _context = context;
+            _config = config;
+        }
         //public async Task<int> SaveJob( JobCreateDto dto)
         //{
         //    using var transaction = await _context.Database.BeginTransactionAsync();
@@ -236,11 +250,37 @@ namespace TalentNode.Infrastructure.Repositories
                    
                     jb.Status = dto.Status;
                     jb.CreatedBy = dto.CreatedBy;
+                    var jobsDetail = _context.JobDetails.Where(x => x.JobId == dto.JobId ).FirstOrDefault();
+                    var Employee= _context.Employee.Where(x => x.EmployeeID == dto.CandidateId).FirstOrDefault();
+                    var company= _context.Company.Where(x => x.CompanyId == jobsDetail.CompanyID).FirstOrDefault();
+                    var statusCandidate= _context.CandidateStatusMaster.Where(x => x.StatusId.ToString() == dto.Status).FirstOrDefault();
+                    if (jobsDetail != null && Employee!=null)
+                    {
+                        var emailtemplaye= _context.EmailTemplates.Where(x => x.Name == "CandidateStatusUpdate").FirstOrDefault();
 
+                        if (emailtemplaye == null)
+                            return 0;
+
+                        // 4. Replace placeholders in email body
+                        string emailBody = emailtemplaye.Body
+                            .Replace("{{CANDIDATE_NAME}}", Employee.FirstName)
+                            .Replace("{{JOB_TITLE}}", jobsDetail.JobTitle)
+                            .Replace("{{COMPANY_NAME}}", company!=null? company.CompanyName:"NA")
+                            .Replace("{{APPLICATION_ID}}", jobsDetail.JobId.ToString())
+                            .Replace("{{CURRENT_YEAR}}", DateTime.Now.Year.ToString())
+                            .Replace("{{STATUS}}", statusCandidate!=null? statusCandidate.StatusName:"Not defined")
+                            .Replace("{{NEXT_STEPS_SECTION}}", "Login to Check More details");
+                        string subject = emailtemplaye.Subject.Replace("{{JOB_TITLE}}", jobsDetail.JobTitle)
+                            .Replace("{{COMPANY_NAME}}", company != null ? company.CompanyName : "NA");
+
+                        var send = SendEmailAsync(Employee.Email, subject, emailBody);
+                    }
 
                     _context.JobApplicationCandidate.Update(jb);
                     int result = await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
+
+
                     return result;
                 }
                 else
@@ -254,6 +294,49 @@ namespace TalentNode.Infrastructure.Repositories
             {
                 await transaction.RollbackAsync();
                 // Optionally log ex.Message here
+                return 0;
+            }
+            
+        }
+
+        public async Task<int> SendEmailAsync(string to, string subject, string htmlBody)
+        {
+            try
+            {
+                // Build email
+                var email = new MimeMessage();
+                email.From.Add(new MailboxAddress("JobWorld4U", _config["SMTP:From"]));
+                email.To.Add(new MailboxAddress("", to));
+                email.Subject = subject;
+                email.Body = new TextPart("html")
+                {
+                    Text = htmlBody
+                };
+
+                using var smtp = new SmtpClient();
+                smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
+                // Connect with SSL → required for port 465
+                await smtp.ConnectAsync(
+                    _config["SMTP:Host"],
+                    int.Parse(_config["SMTP:Port"]),
+                    SecureSocketOptions.SslOnConnect
+                );
+
+                // Authenticate
+                await smtp.AuthenticateAsync(
+                    _config["SMTP:Username"],
+                    _config["SMTP:Password"]
+                );
+
+                // Send email
+                await smtp.SendAsync(email);
+                await smtp.DisconnectAsync(true);
+
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                // Log ex if needed
                 return 0;
             }
         }

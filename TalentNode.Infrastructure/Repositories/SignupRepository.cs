@@ -18,6 +18,22 @@ namespace TalentNode.Infrastructure.Repositories
     {
         public async Task<int> SaveSignup(TalentNode.Domain.Models.SignupDetailsModel signup)
         {
+            var record = await dbContext.EmailOTP
+       .Where(x => x.Email == signup.Email && x.OTP == signup.Otp)
+       .OrderByDescending(x => x.Id)
+       .FirstOrDefaultAsync();
+
+            if (record == null)
+                return 1000;
+
+            if (record.ExpireAt < DateTime.UtcNow)
+                return 1000;
+
+            // ✔ Mark email as verified
+            record.IsVerified = true;
+            await dbContext.SaveChangesAsync();
+
+         
 
             TalentNode.Domain.Entities.UserDetails userDetails = new TalentNode.Domain.Entities.UserDetails();
             userDetails.UserName = signup.Name;
