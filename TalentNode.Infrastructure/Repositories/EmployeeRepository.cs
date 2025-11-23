@@ -50,7 +50,7 @@ namespace TalentNode.Infrastructure.Repositories
             employee.Professional_Summary = model.Bio ?? employee.Professional_Summary;
             dbContext.Employee.Update(employee);
             // Save changes
-           return dbContext.SaveChanges();
+            return dbContext.SaveChanges();
 
         }
 
@@ -64,10 +64,11 @@ namespace TalentNode.Infrastructure.Repositories
             {
 
                 var employee = dbContext.Employee.Where(x => x.EmployeeID == model.EmployeeID).FirstOrDefault();
-                if (employee == null){
+                if (employee == null)
+                {
                     return 0;
                 }
-                var docavail= dbContext.Document.Where(x => x.DocumentID ==employee.ResumeID).FirstOrDefault();
+                var docavail = dbContext.Document.Where(x => x.DocumentID == employee.ResumeID).FirstOrDefault();
                 if (docavail != null)
                 {
                     docavail.IsRemoved = true;
@@ -139,7 +140,7 @@ namespace TalentNode.Infrastructure.Repositories
                                        Email = e.Email,
                                        Phone = e.Phone,
                                        EmpImage = dbContext.Document
-                        .Where(es => es.DocumentID == e.EmpImageID && es.IsRemoved==false)
+                        .Where(es => es.DocumentID == e.EmpImageID && es.IsRemoved == false)
                         .Select(es => es.FileContentBase64)   // string or byte[]
                         .FirstOrDefault(),
                                        Emp_Skills = (from es in dbContext.EmployeeSkill
@@ -167,7 +168,7 @@ namespace TalentNode.Infrastructure.Repositories
             var document = await (from emp in dbContext.Employee
                                   join d in dbContext.Document
                                   on emp.ResumeID equals d.DocumentID
-                                  where d.IsRemoved==false
+                                  where d.IsRemoved == false
                                   select new DocumentDetails
                                   {
                                       DocumentID = d.DocumentID,
@@ -196,7 +197,7 @@ namespace TalentNode.Infrastructure.Repositories
 
             foreach (var EE in EmployeEntity)
             {
-                
+
                 //if (dbContext.Experience.Where(x => x.ExperienceID == EE.ExperienceId).FirstOrDefault() != null)
                 //{
                 //    var record = dbContext.Experience.Where(x=>x.ExperienceID==EE.ExperienceId).FirstOrDefault();
@@ -215,28 +216,28 @@ namespace TalentNode.Infrastructure.Repositories
                 //}
                 //else
                 //{
-                    Experience record = new Experience();
-                    record.OrganizationName = EE.Company;
-                    record.FromDate = EE.StartDate;
-                    record.ToDate = EE.EndDate ;
-                    record.CreatedOn = DateTime.Now;
-                    record.workDescription = EE.Description;
-                    //record.CreatedOn = EE.Created_On;
-                    //record.UpdatedOn = EE.Updated_On;
-                    record.position = EE.Position;
-                    dbContext.Experience.Add(record);
-                    dbContext.SaveChanges();
-                    EmployeeExperiences emp = new EmployeeExperiences();
-                    emp.EmployeeID = EE.EmployeeID;
-                    emp.ExperienceID = record.ExperienceID;
-                    dbContext.EmployeeExperiences.Add(emp);
-                   
+                Experience record = new Experience();
+                record.OrganizationName = EE.Company;
+                record.FromDate = EE.StartDate;
+                record.ToDate = EE.EndDate;
+                record.CreatedOn = DateTime.Now;
+                record.workDescription = EE.Description;
+                //record.CreatedOn = EE.Created_On;
+                //record.UpdatedOn = EE.Updated_On;
+                record.position = EE.Position;
+                dbContext.Experience.Add(record);
+                dbContext.SaveChanges();
+                EmployeeExperiences emp = new EmployeeExperiences();
+                emp.EmployeeID = EE.EmployeeID;
+                emp.ExperienceID = record.ExperienceID;
+                dbContext.EmployeeExperiences.Add(emp);
+
                 //}
- 
+
             }
-            
+
             //dbContext.SaveChanges();
-            
+
             return dbContext.SaveChanges();
         }
         public async Task<int> AddEducationAsync(List<EducationModel> EmployeEntity)
@@ -245,20 +246,20 @@ namespace TalentNode.Infrastructure.Repositories
             {
                 return 0;
             }
-            dbContext.EmployeeQualification.RemoveRange(dbContext.EmployeeQualification.Where(x=>x.EmpID== EmployeEntity[0].degEmpId));
+            dbContext.EmployeeQualification.RemoveRange(dbContext.EmployeeQualification.Where(x => x.EmpID == EmployeEntity[0].degEmpId));
 
             List<EmployeeQualification> eq = new List<EmployeeQualification>();
             foreach (var item in EmployeEntity)
             {
                 //if(dbContext.EmployeeQualification.Where(x=>x.QualID==item.QualificationID && x.EmpID == item.EmployeeID).FirstOrDefault() == null)
                 //{
-                    EmployeeQualification record = new EmployeeQualification();
-                    record.EmpID = item.degEmpId;
-                    record.QualID =item.degree;
-                    record.Institute = item.Institution;
-                    record.PassingYesr = item.Year.ToString();
+                EmployeeQualification record = new EmployeeQualification();
+                record.EmpID = item.degEmpId;
+                record.QualID = item.degree;
+                record.Institute = item.Institution;
+                record.PassingYesr = item.Year.ToString();
                 record.Percentage_CGPA = item.Percentage;
-                    dbContext.EmployeeQualification.Add(record);
+                dbContext.EmployeeQualification.Add(record);
                 //}
                 //else
                 //{
@@ -269,7 +270,7 @@ namespace TalentNode.Infrastructure.Repositories
                 //}
 
             }
-           // dbContext.EmployeeQualification.AddRange(eq);
+            // dbContext.EmployeeQualification.AddRange(eq);
             return dbContext.SaveChanges();
 
         }
@@ -292,7 +293,7 @@ namespace TalentNode.Infrastructure.Repositories
                 record.SkillID = item.name;
                 record.EmployeeID = Convert.ToInt32(item.skillEmpId);
                 record.level = item.level;
-                
+
                 dbContext.EmployeeSkill.Add(record);
                 //}
                 //else
@@ -327,8 +328,8 @@ namespace TalentNode.Infrastructure.Repositories
                       q => q.QualificationID,
                       (eq, q) => new EducationDetail
                       {
-                          degEmpId= employee.EmployeeID,
-                          Degree = q.QualificationID ,
+                          degEmpId = employee.EmployeeID,
+                          Degree = q.QualificationID,
                           Institution = eq.Institute ?? "",
                           Year = Convert.ToInt32(eq.PassingYesr ?? "0"),
                           Percentage = (double)eq.Percentage_CGPA,
@@ -341,8 +342,8 @@ namespace TalentNode.Infrastructure.Repositories
                       ex => ex.ExperienceID,
                       (exMap, ex) => new ExperienceDetail
                       {
-                          EmployeeID=exMap.EmployeeID,
-                          ExperienceId=ex.ExperienceID,
+                          EmployeeID = exMap.EmployeeID,
+                          ExperienceId = ex.ExperienceID,
                           Company = ex.OrganizationName ?? "",
                           Position = ex.position ?? "",
                           StartDate = ex.FromDate.ToString("yyyy-MM"),
@@ -357,8 +358,9 @@ namespace TalentNode.Infrastructure.Repositories
                       es => es.SkillID,
                       sm => sm.SkillID,
                       (es, sm) => new SkillDetail
-                      {skillEmpId=es.EmployeeID,
-                          Name = sm.SkillID ,
+                      {
+                          skillEmpId = es.EmployeeID,
+                          Name = sm.SkillID,
                           Level = es.level ?? ""
                       }).ToList();
 
@@ -373,12 +375,12 @@ namespace TalentNode.Infrastructure.Repositories
                 CurrentPosition = employee.CurrentPosition ?? "",
                 CurrentCompany = employee.WorkingLocation ?? "",
                 ExpectedSalary = decimal.TryParse(employee.ExpectedSalary ?? "0", out var sal) ? sal : 0,
-                CurrentSalary=employee.CurrentSalary??"",
+                CurrentSalary = employee.CurrentSalary ?? "",
                 Avatar = avatar,
                 Resume = resume,
-                Bio=employee.Professional_Summary,
+                Bio = employee.Professional_Summary,
                 stateid = employee.StateID,
-                districtId=employee.DistrictID,
+                districtId = employee.DistrictID,
                 Location = employee.WorkingLocation,//districtName + ", " + stateName,
                 Education = education,
                 Experience = experience,
@@ -389,100 +391,113 @@ namespace TalentNode.Infrastructure.Repositories
 
             return userProfile;
 
-            //        var employeeData = dbContext.Employee
-            //.Where(e => e.EmployeeID == emplyeeid)
-            //.Select(e => new
-            //{
-            //    e.EmployeeID,
-            //    e.FirstName,
-            //    e.LastName,
-            //    e.Email,
-            //    e.Phone,
-            //    e.CurrentPosition,
-            //    e.WorkingLocation,
-            //    e.ExpectedSalary,
-            //    e.EmpImageID,
-            //    e.ResumeID,
-            //    e.StateID,
-            //    e.DistrictID
-            //})
-            //.AsEnumerable() // move to in-memory to allow TryParse
-            //.Select(e => new UserProfile
-            //{
-            //    Id = e.EmployeeID,
-            //    FirstName = e.FirstName ?? "",
-            //    LastName = e.LastName ?? "",
-            //    Email = e.Email ?? "",
-            //    Phone = e.Phone ?? "",
-            //    CurrentPosition = e.CurrentPosition ?? "",
-            //    CurrentCompany = e.WorkingLocation ?? "",
-            //    ExpectedSalary = decimal.TryParse(e.ExpectedSalary ?? "0", out var sal) ? sal : 0,
+        }
 
-            //    // Avatar and Resume
-            //    Avatar = dbContext.Document.FirstOrDefault(d => d.DocumentID == e.EmpImageID)?.Link ?? "",
-            //    Resume = dbContext.Document.FirstOrDefault(d => d.DocumentID == e.ResumeID)?.Link ?? "",
+        public async Task<List<ApplicantProfile>> GetApplicantProfile(ApplicantModel ammd)
+        {
+            int totalRecords = await dbContext.JobApplicationCandidate
+    .Where(jb => jb.JobId == ammd.JobId)
+    .CountAsync();
 
-            //    // Location
-            //    Location = (dbContext.DistrictMaster.FirstOrDefault(d => d.DistrictID == e.DistrictID)?.DistrictName ?? "")
-            //             + ", "
-            //             + (dbContext.StateMaster.FirstOrDefault(s => s.StateID == e.StateID)?.StateName ?? ""),
+            int totalPages = (int)Math.Ceiling((double)totalRecords / ammd.PageSize);
+            List<ApplicantProfile> result = new List<ApplicantProfile>();
+            var data = dbContext.JobApplicationCandidate
+                       .Where(jb => jb.JobId == ammd.JobId)
+                       .OrderBy(jb => jb.CandidateId) // ensure consistent ordering
+                       .Skip((ammd.PageNumber - 1) * ammd.PageSize)
+                       .Take(ammd.PageSize)
+                       .Select(jb => jb.CandidateId)
+                       .ToList();
+            foreach (var emplyeeid in data)
+            {
+                ApplicantProfile temp = new ApplicantProfile();
+                var employee = dbContext.Employee.FirstOrDefault(e => e.EmployeeID == emplyeeid);
+                if (employee == null) return null;
 
-            //    // Education
-            //    Education = dbContext.EmployeeQualification
-            //        .Where(eq => eq.EmpID == e.EmployeeID)
-            //        .Join(dbContext.QualificationMaster,
-            //              eq => eq.QualID,
-            //              q => q.QualificationID,
-            //              (eq, q) => new EducationDetail
-            //              {
-            //                  Degree = q.QualificationName ?? "",
-            //                  Institution = eq.Institute ?? "",
-            //                  Year = Convert.ToInt32(eq.PassingYesr ?? "0"),
-            //                  Percentage = 0
-            //              }).ToList(),
+                var avatar = dbContext.Document.FirstOrDefault(d => d.DocumentID == employee.EmpImageID)?.FileContentBase64 ?? "";
+                var resume = dbContext.Document.FirstOrDefault(d => d.DocumentID == employee.ResumeID)?.FileContentBase64 ?? "";
+                var districtName = dbContext.DistrictMaster.FirstOrDefault(d => d.DistrictID == employee.DistrictID)?.DistrictName ?? "";
+                var stateName = dbContext.StateMaster.FirstOrDefault(s => s.StateID == employee.StateID)?.StateName ?? "";
 
-            //    // Experience
-            //    Experience = dbContext.EmployeeExperiences
-            //        .Where(exMap => exMap.EmployeeID == e.EmployeeID)
-            //        .Join(dbContext.Experience,
-            //              exMap => exMap.ExperienceID,
-            //              ex => ex.ExperienceID,
-            //              (exMap, ex) => new ExperienceDetail
-            //              {
-            //                  Company = ex.OrganizationName ?? "",
-            //                  Position = e.CurrentPosition ?? "",
-            //                  StartDate = ex.FromDate.ToString("yyyy-MM"),
-            //                  EndDate = ex.ToDate != DateTime.MinValue ? ex.ToDate.ToString("yyyy-MM") : "",
-            //                  Current = ex.ToDate == DateTime.MinValue,
-            //                  Description = ""
-            //              }).ToList(),
+                var education = dbContext.EmployeeQualification
+                    .Where(eq => eq.EmpID == employee.EmployeeID)
+                    .Join(dbContext.QualificationMaster,
+                          eq => eq.QualID,
+                          q => q.QualificationID,
+                          (eq, q) => new EducationDetail
+                          {
+                              degEmpId = employee.EmployeeID,
+                              Degree = q.QualificationID,
+                              Institution = eq.Institute ?? "",
+                              Year = Convert.ToInt32(eq.PassingYesr ?? "0"),
+                              Percentage = (double)eq.Percentage_CGPA,
+                          }).ToList();
 
-            //    // Skills
-            //    Skills = dbContext.EmployeeSkill
-            //        .Where(es => es.EmployeeID == e.EmployeeID)
-            //        .Join(dbContext.SkillMaster,
-            //              es => es.SkillID,
-            //              sm => sm.SkillID,
-            //              (es, sm) => new SkillDetail
-            //              {
-            //                  Name = sm.SkillName ?? "",
-            //                  Level = es.level ?? ""
-            //              }).ToList(),
+                var experience = dbContext.EmployeeExperiences
+                    .Where(exMap => exMap.EmployeeID == employee.EmployeeID)
+                    .Join(dbContext.Experience,
+                          exMap => exMap.ExperienceID,
+                          ex => ex.ExperienceID,
+                          (exMap, ex) => new ExperienceDetail
+                          {
+                              EmployeeID = exMap.EmployeeID,
+                              ExperienceId = ex.ExperienceID,
+                              Company = ex.OrganizationName ?? "",
+                              Position = ex.position ?? "",
+                              StartDate = ex.FromDate.ToString("yyyy-MM"),
+                              EndDate = ex.ToDate != DateTime.MinValue ? ex.ToDate.ToString("yyyy-MM") : "",
+                              Current = ex.ToDate == DateTime.MinValue,
+                              Description = ex.workDescription
+                          }).ToList();
 
-            //    // Languages (placeholder)
-            //    Languages = new List<string> { "English", "Hindi" },
+                var skills = dbContext.EmployeeSkill
+                    .Where(es => es.EmployeeID == employee.EmployeeID)
+                    .Join(dbContext.SkillMaster,
+                          es => es.SkillID,
+                          sm => sm.SkillID,
+                          (es, sm) => new SkillDetailApplicant
+                          {
+                              skillEmpId = es.EmployeeID,
+                              Name = sm.SkillName,
+                              Level = es.level ?? ""
+                          }).ToList();
+                var ApplicantStatusId = dbContext.JobApplicationCandidate.Where(X => X.CandidateId == emplyeeid)?.FirstOrDefault()?.Status;
+                var ApplicantStatusDescription = dbContext.CandidateStatusMaster.Where(X => X.StatusId == int.Parse(ApplicantStatusId))?.FirstOrDefault()?.StatusName;
+                var Applydate = dbContext.JobApplicationCandidate.Where(X => X.CandidateId == emplyeeid)?.FirstOrDefault()?.AppliedDate;
+                // build final UserProfile
+                var userProfile = new ApplicantProfile
+                {
+                    Id = employee.EmployeeID,
+                    FirstName = employee.FirstName ?? "",
+                    LastName = employee.LastName ?? "",
+                    Email = employee.Email ?? "",
+                    Phone = employee.Phone ?? "",
+                    CurrentPosition = employee.CurrentPosition ?? "",
+                    CurrentCompany = employee.WorkingLocation ?? "",
+                    ExpectedSalary = decimal.TryParse(employee.ExpectedSalary ?? "0", out var sal) ? sal : 0,
+                    CurrentSalary = employee.CurrentSalary ?? "",
+                    Avatar = avatar,
+                    Resume = resume,
+                    Bio = employee.Professional_Summary,
+                    stateid = employee.StateID,
+                    districtId = employee.DistrictID,
+                    Location = employee.WorkingLocation,//districtName + ", " + stateName,
+                    Education = education,
+                    Experience = experience,
+                    Skills = skills,
+                    Languages = new List<string> { "English", "Hindi" },
+                    SocialLinks = new SocialLinks { Linkedin = "", Github = "", Portfolio = "" },
+                    ApplicantStatus = ApplicantStatusDescription,
+                    ApplicantStatusID = int.Parse(ApplicantStatusId),
+                    ApplyDate = Applydate,
+                    TotalRecords = totalRecords,
+                    TotalPages = totalPages
 
-            //    // Social links (placeholder)
-            //    SocialLinks = new SocialLinks
-            //    {
-            //        Linkedin = "",
-            //        Github = "",
-            //        Portfolio = ""
-            //    }
-            //})
-            //.FirstOrDefault();
+                };
 
-           // return employeeData;
+                result.Add(userProfile);
+            }
+            return result.ToList();
 
         }
 

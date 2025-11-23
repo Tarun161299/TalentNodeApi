@@ -38,6 +38,32 @@ namespace TalentNodeApi.Controllers
             var result = await sender.Send(new MDQualCommand());
             return result;
         }
+
+        [HttpGet("Company")]
+        public async Task<List<CompanyModel>> Company(int hrid)
+        {
+            var result = await sender.Send(new CompanyCommand(hrid));
+            return result;
+        }
+        [HttpGet("Benifits")]
+        public async Task<List<BenefitsMasterModel>> Benifits()
+        {
+            var result = await sender.Send(new BenefitsMasterCommand());
+            return result;
+        }
+        [HttpGet("Department")]
+        public async Task<List<DepartmentModel>> Department()
+        {
+            var result = await sender.Send(new DepartmentMasterCommand());
+            return result;
+        }
+
+        [HttpGet("JobType")]
+        public async Task<List<JobTypeModel>> GetJobType()
+        {
+            var result = await sender.Send(new JobTypeCommand());
+            return result;
+        }
         // GET api/<MDController>/5
 
 
