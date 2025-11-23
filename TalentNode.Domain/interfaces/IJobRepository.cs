@@ -13,7 +13,7 @@ namespace TalentNode.Domain.interfaces
         public Task<int> SaveJob(JobCreateDto dto);
         public  Task<List<JobListDto>> GetJobs(int hrid);
         public Task<JobCreateDto> GetJobById(int jobId);
-        public  Task<List<JobListForEmployee>> ViewJobs(int empId);
+        public  Task<List<JobListForEmployee>> ViewJobs(SearchForJobsModel searchModel);
 
         public Task<int> ApplyForJob(ApplyForJob dto);
 
