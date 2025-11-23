@@ -10,13 +10,13 @@ using TalentNode.Domain.Models;
 namespace TalentNode.Application.command
 {
    
-    public record JobListHrCommand(int hrid) : IRequest<List<JobListDto>>;
+    public record JobListHrCommand(SearchForJobsModelHR searchModel) : IRequest<List<JobListDto>>;
 
     public class JobListHrCommanddHandler(IJobRepository IJobRepository) : IRequestHandler<JobListHrCommand, List<JobListDto>>
     {
         public async Task<List<JobListDto>> Handle(JobListHrCommand request, CancellationToken cancellationToken)
         {
-            return await IJobRepository.GetJobs(request.hrid);
+            return await IJobRepository.GetJobs(request.searchModel);
         }
     }
 }

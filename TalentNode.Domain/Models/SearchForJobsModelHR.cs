@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace TalentNode.Domain.Models
 {
-    public class SearchForJobsModel
+    public class SearchForJobsModelHR
     {
-        public int EmpId { get; set; }
+        public int HrId { get; set; }
 
         public string search { get; set; } = "";
 

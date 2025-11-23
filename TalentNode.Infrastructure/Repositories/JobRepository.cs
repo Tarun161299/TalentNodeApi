@@ -382,15 +382,16 @@ namespace TalentNode.Infrastructure.Repositories
             }
         }
 
-        public async Task<List<JobListDto>> GetJobs(int hrid)
+        public async Task<List<JobListDto>> GetJobs(SearchForJobsModelHR searchModel)
         {
+            searchModel.search = searchModel.search?.Trim()?.ToLower();
             var jobs = (from j in _context.JobDetails
                         join
                        dept in _context.DepartmentMaster on j.DepartmentId equals dept.DepartmentId
                         join c in _context.Company on j.CompanyID equals c.CompanyId
                         join hc in _context.HRCompany on c.CompanyId equals hc.CompanyId
                         join jt in _context.JobType on j.jobTypeId equals jt.Id
-                        where hc.HRId == hrid
+                        where hc.HRId == searchModel.HrId
 
 
                         select new JobListDto
@@ -407,114 +408,170 @@ namespace TalentNode.Infrastructure.Repositories
                                       join sm in _context.SkillMaster on js.skillId equals sm.SkillID
                                       where js.JobId == j.JobId
                                       select sm.SkillName                                    ).ToList().ToArray(),
-                            ApplicantCount = 0,
-                            NewApplicants = 0,
-                            Interviews = 0,
+                            ApplicantCount = _context.JobApplicationCandidate.Where(x => x.JobId == j.JobId).ToArray().Length,
+                            NewApplicants = _context.JobApplicationCandidate.Where(x => x.JobId == j.JobId && x.AppliedDate == DateTime.Today).ToArray().Length,
+                            Interviews = _context.JobApplicationCandidate.Where(x => x.JobId == j.JobId && x.Status == "4").ToArray().Length,
                             PostedDate = j.Created ?? DateTime.Now,
-                            Status = "Active"
+                            Status = j.DeadLine > DateTime.Today ? "active" : "closed",
                         }).ToList().DistinctBy(x=>x).ToList();
-                //.ToListAsync();
+            //.ToListAsync();
+            if (!string.IsNullOrEmpty(searchModel.search))
+            {
+                string s = searchModel.search;
+
+                jobs = jobs.Where(x =>
+                    (x.Title != null && x.Title.ToLower().Contains(s)) ||
+                    (x.Location != null && x.Location.ToLower().Contains(s)) ||
+                    (x.Department != null && x.Department.ToLower().Contains(s)) ||
+                    (x.Skills != null && x.Skills.Any(skill => skill.ToLower().Contains(s)))
+                                   ).ToList();
+            }
+
+            // 3️⃣ distinct
+            jobs = jobs.Where(x => searchModel.status == "" ? x.Status == x.Status : x.Status == searchModel.status).ToList().DistinctBy(x => x.Id).ToList();
 
             return jobs;
         }
-
-        //public async Task<List<JobListForEmployee>> ViewJobs(int EmpId)
-        //{
-        //    var jobs = (from j in _context.JobDetails
-        //                join
-        //               dept in _context.DepartmentMaster on j.DepartmentId equals dept.DepartmentId
-        //                join c in _context.Company on j.CompanyID equals c.CompanyId
-        //                join hc in _context.HRCompany on c.CompanyId equals hc.CompanyId
-        //                join jt in _context.JobType on j.jobTypeId equals jt.Id
-
-
-
-
-        //                select new JobListForEmployee
-        //                {
-        //                    Id = j.JobId,
-        //                    Title = j.JobTitle,
-        //                    Department = dept.DepartmentName, // Map via DepartmentId later
-        //                    Location = j.Address,
-        //                    Description = j.JobDescription,
-        //                    Salary = JobRepository.FormatSalary(j.MinimumSalary, j.MaximumSalary, j.Currency),// j.MinimumSalary + " - " + j.MaximumSalary,
-        //                    Experience = j.ExperienceLevel,
-        //                    Type = jt.Name,
-        //                    Skills = (from js in _context.JobSkills
-        //                              join sm in _context.SkillMaster on js.skillId equals sm.SkillID
-        //                              where js.JobId == j.JobId
-        //                              select sm.SkillName).ToList().ToArray(),
-        //                    ApplicantCount = 0,
-        //                    NewApplicants = 0,
-        //                    Interviews = 0,
-        //                    PostedDate = j.Created ?? DateTime.Now,
-        //                    Status = "Active",
-        //                    employeeStatusForJob= _context.JobApplicationCandidate.Where(x=>x.CandidateId==EmpId && x.JobId==j.JobId).FirstOrDefault()==null?"0": _context.JobApplicationCandidate.Where(x => x.CandidateId == EmpId && x.JobId == j.JobId).FirstOrDefault().Status
-        //                }).ToList().DistinctBy(x => x.Id).ToList();
-        //    //.ToListAsync();
-
-        //    return jobs;
-        //}
 
         public async Task<List<JobListForEmployee>> ViewJobs(SearchForJobsModel searchModel)
         {
             searchModel.search = searchModel.search?.Trim()?.ToLower();
 
-            var jobsQuery = (from j in _context.JobDetails
-                             join dept in _context.DepartmentMaster on j.DepartmentId equals dept.DepartmentId
-                             join c in _context.Company on j.CompanyID equals c.CompanyId
-                             join hc in _context.HRCompany on c.CompanyId equals hc.CompanyId
-                             join jt in _context.JobType on j.jobTypeId equals jt.Id
-                             select new
-                             {
-                                 Job = j,
-                                 Dept = dept,
-                                 JobType = jt,
-                                 Skills = (from js in _context.JobSkills
-                                           join sm in _context.SkillMaster on js.skillId equals sm.SkillID
-                                           where js.JobId == j.JobId
-                                           select sm.SkillName)
-                             });
+            // 1️⃣ First load all jobs + skills (so we can search by skill)
+            var jobs = (from j in _context.JobDetails
+                        join dept in _context.DepartmentMaster on j.DepartmentId equals dept.DepartmentId
+                        join c in _context.Company on j.CompanyID equals c.CompanyId
+                        join hc in _context.HRCompany on c.CompanyId equals hc.CompanyId
+                        join jt in _context.JobType on j.jobTypeId equals jt.Id
 
-            // 🔍 APPLY SEARCH
+                        select new JobListForEmployee
+                        {
+                            Id = j.JobId,
+                            Title = j.JobTitle,
+                            Department = dept.DepartmentName,
+                            Location = j.Address,
+                            Description = j.JobDescription,
+                            Salary = JobRepository.FormatSalary(j.MinimumSalary, j.MaximumSalary, j.Currency),
+                            Experience = j.ExperienceLevel,
+                            Type = jt.Name,
+                            Skills = (from js in _context.JobSkills
+                                      join sm in _context.SkillMaster on js.skillId equals sm.SkillID
+                                      where js.JobId == j.JobId
+                                      select sm.SkillName).ToList().ToArray(),
+                            ApplicantCount = _context.JobApplicationCandidate.Where(x=>x.JobId==j.JobId).ToArray().Length,
+                            NewApplicants = _context.JobApplicationCandidate.Where(x => x.JobId == j.JobId && x.AppliedDate==DateTime.Today).ToArray().Length,
+                            Interviews = _context.JobApplicationCandidate.Where(x => x.JobId == j.JobId && x.Status == "4").ToArray().Length,
+                            PostedDate = j.Created ?? DateTime.Now,
+                            Status = j.DeadLine> DateTime.Today ?"active":"closed",
+                            employeeStatusForJob =
+                                _context.JobApplicationCandidate
+                                    .Where(x => x.CandidateId == searchModel.EmpId && x.JobId == j.JobId)
+                                    .Select(x => x.Status)
+                                    .FirstOrDefault() ?? "0"
+                        }).ToList();     // materialize here so we can filter on skills safely
+
+            // 2️⃣ APPLY SEARCH (title, dept, location, AND skills)
             if (!string.IsNullOrEmpty(searchModel.search))
             {
-                jobsQuery = jobsQuery.Where(x =>
-                    x.Job.JobTitle.ToLower().Contains(searchModel.search) ||
-                    x.Job.Address.ToLower().Contains(searchModel.search) ||
-                    x.Dept.DepartmentName.ToLower().Contains(searchModel.search) ||
-                    x.Skills.Any(s => s.ToLower().Contains(searchModel.search))
-                );
+                string s = searchModel.search;
+
+                jobs = jobs.Where(x =>
+                    (x.Title != null && x.Title.ToLower().Contains(s)) ||
+                    (x.Location != null && x.Location.ToLower().Contains(s)) ||
+                    (x.Department != null && x.Department.ToLower().Contains(s)) ||
+                    (x.Skills != null && x.Skills.Any(skill => skill.ToLower().Contains(s)))
+                                   ).ToList();
             }
 
-            var jobs = jobsQuery
-                .AsEnumerable()   // switch to memory so Skills.ToList works safely
-                .Select(x => new JobListForEmployee
-                {
-                    Id = x.Job.JobId,
-                    Title = x.Job.JobTitle,
-                    Department = x.Dept.DepartmentName,
-                    Location = x.Job.Address,
-                    Description = x.Job.JobDescription,
-                    Salary = JobRepository.FormatSalary(x.Job.MinimumSalary, x.Job.MaximumSalary, x.Job.Currency),
-                    Experience = x.Job.ExperienceLevel,
-                    Type = x.JobType.Name,
-                    Skills = x.Skills.ToList().ToArray(),
-                    ApplicantCount = 0,
-                    NewApplicants = 0,
-                    Interviews = 0,
-                    PostedDate = x.Job.Created ?? DateTime.Now,
-                    Status = "Active",
-                    employeeStatusForJob = _context.JobApplicationCandidate
-                            .Where(a => a.CandidateId == searchModel.EmpId && a.JobId == x.Job.JobId)
-                            .Select(a => a.Status)
-                            .FirstOrDefault() ?? "0"
-                })
-                .DistinctBy(x => x.Id)
-                .ToList();
+            // 3️⃣ distinct
+            jobs = jobs.Where(x=>searchModel.status == "" ? x.Status == x.Status : x.Status == searchModel.status).ToList().DistinctBy(x => x.Id).ToList();
 
             return jobs;
         }
+
+        //public async Task<List<JobListForEmployee>> ViewJobs(SearchForJobsModel searchModel)
+        //{
+        //    string search = searchModel.search?.Trim()?.ToLower();
+
+        //    // 1️⃣ Base Query (joins + skills)
+        //    var baseQuery =
+        //        from j in _context.JobDetails
+        //        join dept in _context.DepartmentMaster on j.DepartmentId equals dept.DepartmentId
+        //        join c in _context.Company on j.CompanyID equals c.CompanyId
+        //        join hc in _context.HRCompany on c.CompanyId equals hc.CompanyId
+        //        join jt in _context.JobType on j.jobTypeId equals jt.Id
+
+        //        // LEFT JOIN JobSkills
+        //        join js in _context.JobSkills on j.JobId equals js.JobId into jobSkills
+        //        from js in jobSkills.DefaultIfEmpty()
+
+        //            // LEFT JOIN SkillMaster
+        //        join sm in _context.SkillMaster on js.skillId equals sm.SkillID into skillNames
+        //        from sm in skillNames.DefaultIfEmpty()
+
+        //        select new
+        //        {
+        //            Job = j,
+        //            Dept = dept,
+        //            JobType = jt,
+        //            SkillName = sm.SkillName
+        //        };
+
+        //    // 2️⃣ Group by job to collect skills
+        //    var groupedQuery =
+        //        baseQuery
+        //        .GroupBy(x => new { x.Job, x.Dept, x.JobType })
+        //        .Select(g => new
+        //        {
+        //            g.Key.Job,
+        //            g.Key.Dept,
+        //            g.Key.JobType,
+        //            Skills = g.Select(s => s.SkillName).Where(s => s != null).Distinct()
+        //        });
+
+        //    // 3️⃣ APPLY SEARCH (after grouping)
+        //    if (!string.IsNullOrEmpty(search))
+        //    {
+        //        groupedQuery = groupedQuery.Where(x =>
+        //            x.Job.JobTitle.ToLower().Contains(search) ||
+        //            x.Job.Address.ToLower().Contains(search) ||
+        //            x.Dept.DepartmentName.ToLower().Contains(search) ||
+        //            x.Skills.Any(s => s.ToLower().Contains(search))
+        //        );
+        //    }
+
+        //    var groupedJobs = await groupedQuery.ToListAsync();
+
+        //    // 4️⃣ FINAL PROJECTION
+        //    var jobs = groupedJobs
+        //        .Select(x => new JobListForEmployee
+        //        {
+        //            Id = x.Job.JobId,
+        //            Title = x.Job.JobTitle,
+        //            Department = x.Dept.DepartmentName,
+        //            Location = x.Job.Address,
+        //            Description = x.Job.JobDescription,
+        //            Salary = JobRepository.FormatSalary(x.Job.MinimumSalary, x.Job.MaximumSalary, x.Job.Currency),
+        //            Experience = x.Job.ExperienceLevel,
+        //            Type = x.JobType.Name,
+        //            Skills = x.Skills.ToArray(),
+        //            ApplicantCount = 0,
+        //            NewApplicants = 0,
+        //            Interviews = 0,
+        //            PostedDate = x.Job.Created ?? DateTime.Now,
+        //            Status = "Active",
+
+        //            employeeStatusForJob =
+        //                _context.JobApplicationCandidate
+        //                .Where(a => a.CandidateId == searchModel.EmpId && a.JobId == x.Job.JobId)
+        //                .Select(a => a.Status)
+        //                .FirstOrDefault() ?? "0"
+        //        })
+        //        .ToList();
+
+        //    return jobs;
+        //}
+
 
         // ✅ Helper: Format Salary based on currency
         public static string FormatSalary(string? min, string? max, string? currency)
