@@ -30,19 +30,19 @@ namespace TalentNodeApi.Controllers
             var result = await sender.Send(new UpdateApplicantStatusCommand(job));
             return result;
         }
-        [HttpGet("JobsToEmployee")]
-        public async Task<List<JobListForEmployee>> JobsToEmployee(int EmpId)
+        [HttpPost("JobsToEmployee")]
+        public async Task<List<JobListForEmployee>> JobsToEmployee(SearchForJobsModel searchModel)
         {
-            var result = await sender.Send(new JobsToEmployeeCommand(EmpId));
+            var result = await sender.Send(new JobsToEmployeeCommand(searchModel));
             return result;
         }
 
 
 
-        [HttpGet("GetJobsHr")]
-        public async Task<List<JobListDto>> GetJobs(int hrid)
+        [HttpPost("GetJobsHr")]
+        public async Task<List<JobListDto>> GetJobs(SearchForJobsModelHR searchModel)
         {
-            var result = await sender.Send(new JobListHrCommand(hrid));
+            var result = await sender.Send(new JobListHrCommand(searchModel));
             return result;
         }
 
