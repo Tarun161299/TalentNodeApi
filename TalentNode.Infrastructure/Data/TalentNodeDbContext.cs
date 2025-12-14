@@ -46,7 +46,12 @@ namespace TalentNode.Infrastructure.Data
         public DbSet<CandidateStatusMaster> CandidateStatusMaster { get; set; }
 
         public DbSet<JobApplicationCandidate> JobApplicationCandidate { get; set; }
+        public DbSet<EmployeeKeySkills> EmployeeKeySkills { get; set; }
 
+        public DbSet<Projects> Projects { get; set; }
+
+        public DbSet<EmployeeProjects> EmployeeProjects { get; set; }
+        public DbSet<MdKeySkill> MdKeySkill { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -57,7 +62,10 @@ namespace TalentNode.Infrastructure.Data
   .HasKey(m => new { m.MainModuleID, m.ModuleID });
             modelBuilder.Entity<JobApplicationCandidate>()
         .HasKey(c => new { c.CandidateId, c.JobId });
-
+            modelBuilder.Entity<EmployeeKeySkills>()
+.HasKey(c => new { c.EmpId, c.KeySkillId });
+            modelBuilder.Entity<EmployeeProjects>()
+        .HasKey(c => new { c.EmpId, c.ProjectId });
             // Composite keys
             modelBuilder.Entity<EmployeeQualification>()
                 .HasKey(eq => new { eq.EmpID, eq.QualID });

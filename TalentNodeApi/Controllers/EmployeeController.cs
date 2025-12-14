@@ -55,6 +55,20 @@ namespace TalentNodeApi.Controllers
             return result;
         }
 
+        [HttpPost("saveProjectDetails")]
+        public async Task<int> saveProjectDetails(List<ProjectAdd> projectAdd)
+        {
+            var result = await sender.Send(new SaveEmployeeProjectCommand(projectAdd));
+            return result;
+        }
+
+        [HttpPost("saveKeySkillDetails")]
+        public async Task<int> saveKeySkillDetails(List<AddEmployeeKeyskillmodel> SkillAdd)
+        {
+            var result = await sender.Send(new AddEmployeeKeySkillCommand(SkillAdd));
+            return result;
+        }
+
         [HttpPost("GetApllicantList")]
         public async Task<List<ApplicantProfile>> GetApllicantList(ApplicantModel Appm)
         {

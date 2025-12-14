@@ -10,7 +10,7 @@ namespace TalentNode.Domain.interfaces
     public interface IMdRepository
     {
         public Task<List<Skills>> GetAllSkills();
-
+        public Task<List<MdKeySkillModel>> GetAllKeySkills();
         public Task<List<MdDistrict>> GetAllDistrict();
 
         public Task<List<MdState>> GetAllState();

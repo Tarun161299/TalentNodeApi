@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -309,6 +310,105 @@ namespace TalentNode.Infrastructure.Repositories
             return dbContext.SaveChanges();
 
         }
+        public async Task<int> AddKeyskillsAsync(List<AddEmployeeKeyskillmodel> EmployeEntity)
+        {
+            if (EmployeEntity == null)
+            {
+                return 0;
+            }
+            dbContext.EmployeeKeySkills.RemoveRange(dbContext.EmployeeKeySkills.Where(x => x.EmpId == EmployeEntity[0].EmpId));
+
+            List<EmployeeQualification> eq = new List<EmployeeQualification>();
+            foreach (var item in EmployeEntity)
+            {
+                //if(dbContext.EmployeeQualification.Where(x=>x.QualID==item.QualificationID && x.EmpID == item.EmployeeID).FirstOrDefault() == null)
+                //{
+                EmployeeKeySkills record = new EmployeeKeySkills();
+                record.KeySkillId = item.KeySkillId;
+                record.EmpId = Convert.ToInt32(item.EmpId);
+                record.level = item.level;
+
+                dbContext.EmployeeKeySkills.Add(record);
+                //}
+                //else
+                //{
+                //    var record = dbContext.EmployeeQualification.Where(x => x.QualID == item.QualificationID && x.EmpID == item.EmployeeID).FirstOrDefault();
+                //    record.Institute = item.Institution;
+                //    record.PassingYesr = item.Year;
+                //    dbContext.EmployeeQualification.Update(record);
+                //}
+
+            }
+            // dbContext.EmployeeQualification.AddRange(eq);
+            return dbContext.SaveChanges();
+
+        }
+public async Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity)
+{
+    if (projectEntity == null || projectEntity.Count == 0)
+    {
+        return 0;
+    }
+
+    using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+    try
+    {
+        int empId = projectEntity[0].projectEmpId;
+
+        // Remove old mappings
+        var oldEmpProjects = dbContext.EmployeeProjects
+                                      .Where(x => x.EmpId == empId);
+
+        dbContext.EmployeeProjects.RemoveRange(oldEmpProjects);
+
+        foreach (var item in projectEntity)
+        {
+            // 1️⃣ Insert into Project table
+            Projects project = new Projects
+            {
+                ProjectName = item.name,
+                StartDate = DateOnly.FromDateTime(DateTime.ParseExact(
+                    item.startDate + "-01",
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture
+                )),
+                EndDate = (item.ongoing == true ? null : DateOnly.FromDateTime(DateTime.ParseExact(
+                    item.endDate + "-01",
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture
+                ))),
+                Description = item.description,
+                Technologies = item.technologies,
+                ProjectUrl = item.url,
+                CreatedOn = DateTime.UtcNow
+            };
+
+            dbContext.Projects.Add(project);
+            await dbContext.SaveChangesAsync(); // Needed to get ProjectId
+
+            // 2️⃣ Insert mapping into EmployeeProject
+            EmployeeProjects empProject = new EmployeeProjects
+            {
+                EmpId = empId,
+                ProjectId = project.ProjectId,
+                iscurrentlyworking = item.ongoing
+            };
+
+            dbContext.EmployeeProjects.Add(empProject);
+        }
+
+        int result = await dbContext.SaveChangesAsync();
+
+        await transaction.CommitAsync();   // ✅ commit
+        return result;
+    }
+    catch
+    {
+        await transaction.RollbackAsync(); // 🔥 rollback
+        throw;
+    }
+}
 
         public async Task<UserProfile> GetEmployeeDetails(int emplyeeid)
         {
@@ -364,7 +464,39 @@ namespace TalentNode.Infrastructure.Repositories
                           Level = es.level ?? ""
                       }).ToList();
 
+            var keySkills = dbContext.EmployeeKeySkills
+                .Where(es => es.EmpId == employee.EmployeeID)
+                .Join(dbContext.MdKeySkill,
+                      es => es.KeySkillId,
+                      sm => sm.keyskillId,
+                      (es, sm) => new SkillKeyDetail
+                      {
+                          EmpId = es.EmpId,
+                          KeySkillId = sm.keyskillId,
+                          level = es.level ?? ""
+                      }).ToList();
+
             // build final UserProfile
+            
+            var projects = dbContext.EmployeeProjects
+    .Where(ep => ep.EmpId == employee.EmployeeID)
+    .Join(dbContext.Projects,
+          ep => ep.ProjectId,
+          p => p.ProjectId,
+          (ep, p) => new ProjectDetail
+          {
+              ProjectEmpId = ep.EmpId,
+              name = p.ProjectName ?? "",
+              StartDate = p.StartDate.Value.ToString("yyyy-MM"),
+              EndDate = ep.iscurrentlyworking==true
+                            ? ""
+                            : p.EndDate.Value.ToString("yyyy-MM"),
+              ongoing = ep.iscurrentlyworking,
+              Description = p.Description ?? "",
+              Technologies = p.Technologies ?? "",
+              Url = p.ProjectUrl ?? ""
+          })
+    .ToList();
             var userProfile = new UserProfile
             {
                 Id = employee.EmployeeID,
@@ -385,18 +517,18 @@ namespace TalentNode.Infrastructure.Repositories
                 Education = education,
                 Experience = experience,
                 Skills = skills,
+                KeySkills = keySkills,
+                Projects= projects,
                 Languages = new List<string> { "English", "Hindi" },
                 SocialLinks = new SocialLinks { Linkedin = "", Github = "", Portfolio = "" }
             };
-
             return userProfile;
 
         }
 
         public async Task<List<ApplicantProfile>> GetApplicantProfile(ApplicantModel ammd)
         {
-            int totalRecords = await dbContext.JobApplicationCandidate
-    .Where(jb => jb.JobId == ammd.JobId)
+            int totalRecords = await dbContext.JobApplicationCandidate.Where(jb => jb.JobId == ammd.JobId)
     .CountAsync();
 
             int totalPages = (int)Math.Ceiling((double)totalRecords / ammd.PageSize);

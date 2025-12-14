@@ -49,6 +49,7 @@ namespace TalentNode.Domain.Entities
 
         public int? EmpImageID { get; set; }
 
+
         public string? Professional_Summary { get; set; }
 
 

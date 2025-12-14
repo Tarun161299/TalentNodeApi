@@ -43,6 +43,10 @@ namespace TalentNode.Domain.Models
             public List<ExperienceDetail> Experience { get; set; } = new();
             public List<SkillDetail> Skills { get; set; } = new();
 
+            public List<SkillKeyDetail> KeySkills { get; set; } = new();
+
+            public List<ProjectDetail> Projects { get; set; } = new();
+
             public List<string> Languages { get; set; } = new();
 
             public SocialLinks SocialLinks { get; set; } = new();
@@ -96,6 +100,18 @@ namespace TalentNode.Domain.Models
 
         }
 
+
+        public class ProjectDetail
+        {
+            public int ProjectEmpId { get; set; }
+            public string name { get; set; }
+            public string StartDate { get; set; }   // yyyy-MM-dd
+            public string EndDate { get; set; }
+            public bool ongoing { get; set; }
+            public string Description { get; set; }
+            public string Technologies { get; set; }
+            public string Url { get; set; }
+        }
         public class EducationDetail
         {
             
@@ -127,6 +143,14 @@ namespace TalentNode.Domain.Models
             public string Level { get; set; }
         }
 
+        public class SkillKeyDetail
+        {
+            public int EmpId { get; set; }
+            public int KeySkillId { get; set; }
+
+
+            public string level { get; set; }
+        }
         public class SkillDetailApplicant
         {
             public int skillEmpId { get; set; }

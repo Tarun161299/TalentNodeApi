@@ -14,6 +14,8 @@ namespace TalentNode.Domain.interfaces
     {
         public Task<IEnumerable<EmployeEntity>> GetEmployees();
         public Task<int> AddEmployeeAsync(SaveEmployee EmployeEntity);
+
+        public Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity);
         public Task<List<Get_All_Employee_Data>> Get_All_Employee_Data();
 
         public Task<DocumentDetails> GetDocumentByID(int EmployeeID);
@@ -24,6 +26,8 @@ namespace TalentNode.Domain.interfaces
 
         public Task<UserProfile> GetEmployeeDetails(int emplyeeid);
         public Task<List<ApplicantProfile>> GetApplicantProfile(ApplicantModel ammd);
+
+        Task<int> AddKeyskillsAsync(List<AddEmployeeKeyskillmodel> EmployeEntity);
         public Task<int> AddskillsAsync(List<SkillAdd> EmployeEntity);
 
         public Task<int> AddDocumentAsync(EmployeeDocumentModel model);

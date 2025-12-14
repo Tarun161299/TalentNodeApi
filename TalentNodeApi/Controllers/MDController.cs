@@ -19,6 +19,13 @@ namespace TalentNodeApi.Controllers
             return result;
         }
 
+        [HttpGet("KeySkills")]
+        public async Task<List<MdKeySkillModel>> GetAllKeySkills()
+        {
+            var result = await sender.Send(new GetAllKeySkillsCommand());
+            return result;
+        }
+
         [HttpGet("District")]
         public async Task<List<MdDistrict>> GetDistrict()
         {
