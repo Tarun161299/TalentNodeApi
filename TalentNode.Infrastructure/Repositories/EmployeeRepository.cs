@@ -599,7 +599,8 @@ public async Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity)
                       {
                           skillEmpId = es.EmployeeID,
                           Name = sm.SkillID,
-                          Level = es.level ?? ""
+                          Level = es.level ?? "",
+                          skillname=sm.SkillName
                       })
                 .ToListAsync();
 
@@ -613,7 +614,8 @@ public async Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity)
                       {
                           EmpId = es.EmpId,
                           KeySkillId = sm.keyskillId,
-                          level = es.level ?? ""
+                          level = es.level ?? "",
+                          keyName=sm.Description
                       })
                 .ToListAsync();
 
@@ -735,7 +737,8 @@ public async Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity)
                           {
                               skillEmpId = es.EmployeeID,
                               Name = sm.SkillName,
-                              Level = es.level ?? ""
+                              Level = es.level ?? "",
+                              skillname=sm.SkillName
                           }).ToList();
                 var ApplicantStatusId = dbContext.JobApplicationCandidate.Where(X => X.CandidateId == emplyeeid)?.FirstOrDefault()?.Status;
                 var ApplicantStatusDescription = dbContext.CandidateStatusMaster.Where(X => X.StatusId == int.Parse(ApplicantStatusId))?.FirstOrDefault()?.StatusName;

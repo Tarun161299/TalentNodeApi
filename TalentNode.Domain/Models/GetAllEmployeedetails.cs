@@ -139,7 +139,7 @@ namespace TalentNode.Domain.Models
             public int skillEmpId { get; set; }
             public int Name { get; set; }
 
-            
+            public string? skillname { get; set; }
             public string Level { get; set; }
         }
 
@@ -148,7 +148,7 @@ namespace TalentNode.Domain.Models
             public int EmpId { get; set; }
             public int KeySkillId { get; set; }
 
-
+            public string? keyName { get; set; }
             public string level { get; set; }
         }
         public class SkillDetailApplicant
@@ -156,7 +156,7 @@ namespace TalentNode.Domain.Models
             public int skillEmpId { get; set; }
             public string? Name { get; set; }
 
-
+            public string? skillname { get; set; }
             public string Level { get; set; }
         }
         public class SocialLinks
