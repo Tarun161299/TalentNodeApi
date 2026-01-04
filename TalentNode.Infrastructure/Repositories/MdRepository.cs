@@ -49,6 +49,19 @@ namespace TalentNode.Infrastructure.Repositories
                           };
             return mdSkill.ToList();
         }
+
+        public async Task<List<MdKeySkillModel>> GetAllKeySkills()
+        {
+            var skillMaster = dbContext.MdKeySkill;
+            var mdSkill = from d in skillMaster
+                          select new MdKeySkillModel
+                          {
+                              keyskillId = d.keyskillId,
+                              Description = d.Description
+
+                          };
+            return mdSkill.ToList();
+        }
         public async Task<List<MDQualification>> GetAllQualification()
         {
             var QualificationMaster = dbContext.QualificationMaster;

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TalentNode.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TalentNode.Infrastructure.Data;
 namespace TalentNode.Infrastructure.Migrations
 {
     [DbContext(typeof(TalentNodeDbContext))]
-    partial class TalentNodeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251206131912_KeySkills")]
+    partial class KeySkills
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -417,41 +420,6 @@ namespace TalentNode.Infrastructure.Migrations
                     b.ToTable("EmployeeExperiences");
                 });
 
-            modelBuilder.Entity("TalentNode.Domain.Entities.EmployeeKeySkills", b =>
-                {
-                    b.Property<int>("EmpId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("KeySkillId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("level")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("EmpId", "KeySkillId");
-
-                    b.ToTable("EmployeeKeySkills");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.EmployeeProjects", b =>
-                {
-                    b.Property<int>("EmpId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<bool?>("iscurrentlyworking")
-                        .HasColumnType("bit");
-
-                    b.HasKey("EmpId", "ProjectId");
-
-                    b.ToTable("EmployeeProjects");
-                });
-
             modelBuilder.Entity("TalentNode.Domain.Entities.EmployeeQualification", b =>
                 {
                     b.Property<int>("EmpID")
@@ -749,23 +717,6 @@ namespace TalentNode.Infrastructure.Migrations
                     b.ToTable("MdModule");
                 });
 
-            modelBuilder.Entity("TalentNode.Domain.Entities.MdKeySkill", b =>
-                {
-                    b.Property<int>("keyskillId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("keyskillId"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("keyskillId");
-
-                    b.ToTable("MdKeySkill");
-                });
-
             modelBuilder.Entity("TalentNode.Domain.Entities.MdMainModule", b =>
                 {
                     b.Property<int>("Roleid")
@@ -804,43 +755,6 @@ namespace TalentNode.Infrastructure.Migrations
                     b.HasKey("MainModuleID", "ModuleID");
 
                     b.ToTable("MdRoleModule");
-                });
-
-            modelBuilder.Entity("TalentNode.Domain.Entities.Projects", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectId"));
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("ProjectName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProjectUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly?>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Technologies")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProjectId");
-
-                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("TalentNode.Domain.Entities.QualificationMaster", b =>
