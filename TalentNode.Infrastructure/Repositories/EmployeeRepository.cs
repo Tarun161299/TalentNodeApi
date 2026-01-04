@@ -410,20 +410,152 @@ public async Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity)
     }
 }
 
+        //    public async Task<UserProfile> GetEmployeeDetails(int emplyeeid)
+        //    {
+
+        //        var employee = dbContext.Employee.FirstOrDefault(e => e.EmployeeID == emplyeeid);
+        //        if (employee == null) return null;
+
+        //        var avatar = dbContext.Document.FirstOrDefault(d => d.DocumentID == employee.EmpImageID)?.FileContentBase64 ?? "";
+        //        var resume = dbContext.Document.FirstOrDefault(d => d.DocumentID == employee.ResumeID)?.FileContentBase64 ?? "";
+        //        var districtName = dbContext.DistrictMaster.FirstOrDefault(d => d.DistrictID == employee.DistrictID)?.DistrictName ?? "";
+        //        var stateName = dbContext.StateMaster.FirstOrDefault(s => s.StateID == employee.StateID)?.StateName ?? "";
+
+        //        var education = dbContext.EmployeeQualification
+        //            .Where(eq => eq.EmpID == employee.EmployeeID)
+        //            .Join(dbContext.QualificationMaster,
+        //                  eq => eq.QualID,
+        //                  q => q.QualificationID,
+        //                  (eq, q) => new EducationDetail
+        //                  {
+        //                      degEmpId = employee.EmployeeID,
+        //                      Degree = q.QualificationID,
+        //                      Institution = eq.Institute ?? "",
+        //                      Year = Convert.ToInt32(eq.PassingYesr ?? "0"),
+        //                      Percentage = (double)eq.Percentage_CGPA,
+        //                  }).ToList();
+
+        //        var experience = dbContext.EmployeeExperiences
+        //            .Where(exMap => exMap.EmployeeID == employee.EmployeeID)
+        //            .Join(dbContext.Experience,
+        //                  exMap => exMap.ExperienceID,
+        //                  ex => ex.ExperienceID,
+        //                  (exMap, ex) => new ExperienceDetail
+        //                  {
+        //                      EmployeeID = exMap.EmployeeID,
+        //                      ExperienceId = ex.ExperienceID,
+        //                      Company = ex.OrganizationName ?? "",
+        //                      Position = ex.position ?? "",
+        //                      StartDate = ex.FromDate.ToString("yyyy-MM"),
+        //                      EndDate = ex.ToDate != DateTime.MinValue ? ex.ToDate.ToString("yyyy-MM") : "",
+        //                      Current = ex.ToDate == DateTime.MinValue,
+        //                      Description = ex.workDescription
+        //                  }).ToList();
+
+        //        var skills = dbContext.EmployeeSkill
+        //            .Where(es => es.EmployeeID == employee.EmployeeID)
+        //            .Join(dbContext.SkillMaster,
+        //                  es => es.SkillID,
+        //                  sm => sm.SkillID,
+        //                  (es, sm) => new SkillDetail
+        //                  {
+        //                      skillEmpId = es.EmployeeID,
+        //                      Name = sm.SkillID,
+        //                      Level = es.level ?? ""
+        //                  }).ToList();
+
+        //        var keySkills = dbContext.EmployeeKeySkills
+        //            .Where(es => es.EmpId == employee.EmployeeID)
+        //            .Join(dbContext.MdKeySkill,
+        //                  es => es.KeySkillId,
+        //                  sm => sm.keyskillId,
+        //                  (es, sm) => new SkillKeyDetail
+        //                  {
+        //                      EmpId = es.EmpId,
+        //                      KeySkillId = sm.keyskillId,
+        //                      level = es.level ?? ""
+        //                  }).ToList();
+
+        //        // build final UserProfile
+
+        //        var projects = dbContext.EmployeeProjects
+        //.Where(ep => ep.EmpId == employee.EmployeeID)
+        //.Join(dbContext.Projects,
+        //      ep => ep.ProjectId,
+        //      p => p.ProjectId,
+        //      (ep, p) => new ProjectDetail
+        //      {
+        //          ProjectEmpId = ep.EmpId,
+        //          name = p.ProjectName ?? "",
+        //          StartDate = p.StartDate.Value.ToString("yyyy-MM"),
+        //          EndDate = ep.iscurrentlyworking==true
+        //                        ? ""
+        //                        : p.EndDate.Value.ToString("yyyy-MM"),
+        //          ongoing = ep.iscurrentlyworking,
+        //          Description = p.Description ?? "",
+        //          Technologies = p.Technologies ?? "",
+        //          Url = p.ProjectUrl ?? ""
+        //      })
+        //.ToList();
+        //        var userProfile = new UserProfile
+        //        {
+        //            Id = employee.EmployeeID,
+        //            FirstName = employee.FirstName ?? "",
+        //            LastName = employee.LastName ?? "",
+        //            Email = employee.Email ?? "",
+        //            Phone = employee.Phone ?? "",
+        //            CurrentPosition = employee.CurrentPosition ?? "",
+        //            CurrentCompany = employee.WorkingLocation ?? "",
+        //            ExpectedSalary = decimal.TryParse(employee.ExpectedSalary ?? "0", out var sal) ? sal : 0,
+        //            CurrentSalary = employee.CurrentSalary ?? "",
+        //            Avatar = avatar,
+        //            Resume = resume,
+        //            Bio = employee.Professional_Summary,
+        //            stateid = employee.StateID,
+        //            districtId = employee.DistrictID,
+        //            Location = employee.WorkingLocation,//districtName + ", " + stateName,
+        //            Education = education,
+        //            Experience = experience,
+        //            Skills = skills,
+        //            KeySkills = keySkills,
+        //            Projects= projects,
+        //            Languages = new List<string> { "English", "Hindi" },
+        //            SocialLinks = new SocialLinks { Linkedin = "", Github = "", Portfolio = "" }
+        //        };
+        //        return userProfile;
+
+        //    }
+
         public async Task<UserProfile> GetEmployeeDetails(int emplyeeid)
         {
+            dbContext.Database.SetCommandTimeout(180);
 
-            var employee = dbContext.Employee.FirstOrDefault(e => e.EmployeeID == emplyeeid);
-            if (employee == null) return null;
+            var employee = await dbContext.Employee
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.EmployeeID == emplyeeid);
 
-            var avatar = dbContext.Document.FirstOrDefault(d => d.DocumentID == employee.EmpImageID)?.FileContentBase64 ?? "";
-            var resume = dbContext.Document.FirstOrDefault(d => d.DocumentID == employee.ResumeID)?.FileContentBase64 ?? "";
-            var districtName = dbContext.DistrictMaster.FirstOrDefault(d => d.DistrictID == employee.DistrictID)?.DistrictName ?? "";
-            var stateName = dbContext.StateMaster.FirstOrDefault(s => s.StateID == employee.StateID)?.StateName ?? "";
+            if (employee == null)
+                return null;
 
-            var education = dbContext.EmployeeQualification
+            // Load avatar & resume in single query
+            var documents = await dbContext.Document
+                .AsNoTracking()
+                .Where(d => d.DocumentID == employee.EmpImageID
+                         || d.DocumentID == employee.ResumeID)
+                .ToListAsync();
+
+            var avatar = documents
+                .FirstOrDefault(d => d.DocumentID == employee.EmpImageID)
+                ?.FileContentBase64 ?? "";
+
+            var resume = documents
+                .FirstOrDefault(d => d.DocumentID == employee.ResumeID)
+                ?.FileContentBase64 ?? "";
+
+            var education = await dbContext.EmployeeQualification
+                .AsNoTracking()
                 .Where(eq => eq.EmpID == employee.EmployeeID)
-                .Join(dbContext.QualificationMaster,
+                .Join(dbContext.QualificationMaster.AsNoTracking(),
                       eq => eq.QualID,
                       q => q.QualificationID,
                       (eq, q) => new EducationDetail
@@ -432,12 +564,14 @@ public async Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity)
                           Degree = q.QualificationID,
                           Institution = eq.Institute ?? "",
                           Year = Convert.ToInt32(eq.PassingYesr ?? "0"),
-                          Percentage = (double)eq.Percentage_CGPA,
-                      }).ToList();
+                          Percentage = (double)eq.Percentage_CGPA
+                      })
+                .ToListAsync();
 
-            var experience = dbContext.EmployeeExperiences
+            var experience = await dbContext.EmployeeExperiences
+                .AsNoTracking()
                 .Where(exMap => exMap.EmployeeID == employee.EmployeeID)
-                .Join(dbContext.Experience,
+                .Join(dbContext.Experience.AsNoTracking(),
                       exMap => exMap.ExperienceID,
                       ex => ex.ExperienceID,
                       (exMap, ex) => new ExperienceDetail
@@ -447,14 +581,18 @@ public async Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity)
                           Company = ex.OrganizationName ?? "",
                           Position = ex.position ?? "",
                           StartDate = ex.FromDate.ToString("yyyy-MM"),
-                          EndDate = ex.ToDate != DateTime.MinValue ? ex.ToDate.ToString("yyyy-MM") : "",
+                          EndDate = ex.ToDate != DateTime.MinValue
+                                        ? ex.ToDate.ToString("yyyy-MM")
+                                        : "",
                           Current = ex.ToDate == DateTime.MinValue,
                           Description = ex.workDescription
-                      }).ToList();
+                      })
+                .ToListAsync();
 
-            var skills = dbContext.EmployeeSkill
+            var skills = await dbContext.EmployeeSkill
+                .AsNoTracking()
                 .Where(es => es.EmployeeID == employee.EmployeeID)
-                .Join(dbContext.SkillMaster,
+                .Join(dbContext.SkillMaster.AsNoTracking(),
                       es => es.SkillID,
                       sm => sm.SkillID,
                       (es, sm) => new SkillDetail
@@ -462,11 +600,13 @@ public async Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity)
                           skillEmpId = es.EmployeeID,
                           Name = sm.SkillID,
                           Level = es.level ?? ""
-                      }).ToList();
+                      })
+                .ToListAsync();
 
-            var keySkills = dbContext.EmployeeKeySkills
+            var keySkills = await dbContext.EmployeeKeySkills
+                .AsNoTracking()
                 .Where(es => es.EmpId == employee.EmployeeID)
-                .Join(dbContext.MdKeySkill,
+                .Join(dbContext.MdKeySkill.AsNoTracking(),
                       es => es.KeySkillId,
                       sm => sm.keyskillId,
                       (es, sm) => new SkillKeyDetail
@@ -474,30 +614,35 @@ public async Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity)
                           EmpId = es.EmpId,
                           KeySkillId = sm.keyskillId,
                           level = es.level ?? ""
-                      }).ToList();
+                      })
+                .ToListAsync();
 
-            // build final UserProfile
-            
-            var projects = dbContext.EmployeeProjects
-    .Where(ep => ep.EmpId == employee.EmployeeID)
-    .Join(dbContext.Projects,
-          ep => ep.ProjectId,
-          p => p.ProjectId,
-          (ep, p) => new ProjectDetail
-          {
-              ProjectEmpId = ep.EmpId,
-              name = p.ProjectName ?? "",
-              StartDate = p.StartDate.Value.ToString("yyyy-MM"),
-              EndDate = ep.iscurrentlyworking==true
-                            ? ""
-                            : p.EndDate.Value.ToString("yyyy-MM"),
-              ongoing = ep.iscurrentlyworking,
-              Description = p.Description ?? "",
-              Technologies = p.Technologies ?? "",
-              Url = p.ProjectUrl ?? ""
-          })
-    .ToList();
-            var userProfile = new UserProfile
+            var projects = await dbContext.EmployeeProjects
+                .AsNoTracking()
+                .Where(ep => ep.EmpId == employee.EmployeeID)
+                .Join(dbContext.Projects.AsNoTracking(),
+                      ep => ep.ProjectId,
+                      p => p.ProjectId,
+                      (ep, p) => new ProjectDetail
+                      {
+                          ProjectEmpId = ep.EmpId,
+                          name = p.ProjectName ?? "",
+                          StartDate = p.StartDate.HasValue
+                                        ? p.StartDate.Value.ToString("yyyy-MM")
+                                        : "",
+                          EndDate = ep.iscurrentlyworking == true
+                                        ? ""
+                                        : (p.EndDate.HasValue
+                                            ? p.EndDate.Value.ToString("yyyy-MM")
+                                            : ""),
+                          ongoing = ep.iscurrentlyworking,
+                          Description = p.Description ?? "",
+                          Technologies = p.Technologies ?? "",
+                          Url = p.ProjectUrl ?? ""
+                      })
+                .ToListAsync();
+
+            return new UserProfile
             {
                 Id = employee.EmployeeID,
                 FirstName = employee.FirstName ?? "",
@@ -513,18 +658,17 @@ public async Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity)
                 Bio = employee.Professional_Summary,
                 stateid = employee.StateID,
                 districtId = employee.DistrictID,
-                Location = employee.WorkingLocation,//districtName + ", " + stateName,
+                Location = employee.WorkingLocation,
                 Education = education,
                 Experience = experience,
                 Skills = skills,
                 KeySkills = keySkills,
-                Projects= projects,
+                Projects = projects,
                 Languages = new List<string> { "English", "Hindi" },
-                SocialLinks = new SocialLinks { Linkedin = "", Github = "", Portfolio = "" }
+                SocialLinks = new SocialLinks()
             };
-            return userProfile;
-
         }
+
 
         public async Task<List<ApplicantProfile>> GetApplicantProfile(ApplicantModel ammd)
         {
