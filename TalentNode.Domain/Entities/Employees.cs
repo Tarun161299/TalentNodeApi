@@ -45,6 +45,7 @@ namespace TalentNode.Domain.Entities
         public string? ExpectedSalary { get; set; }
 
         public string? CurrentSalary { get; set; }
+        public string? NoticePeriod { get; set; }
         public int? ResumeID { get; set; }
 
         public int? EmpImageID { get; set; }

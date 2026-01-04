@@ -67,49 +67,57 @@ namespace TalentNode.Infrastructure.Repositories
         //}
         public async Task<string> AuthenticateUser(Models.UserDetails user)
         {
-            var email = user.UserName.Trim().ToLower();
-            var password = user.Password; // Ideally hash this
-            var details_to_check = dbContext.UserDetails.Where(x => x.EmailID.Trim().ToLower() == email && x.Password == password).FirstOrDefault();
-            if (details_to_check == null)
+            try
             {
-                return  "401";
-            }
-            var userDetails = await (
-                from Usd in dbContext.UserDetails.AsNoTracking()
-                join URP in dbContext.UserRoleMapping on Usd.UserID.ToString() equals URP.UserName
-                join RM in dbContext.RoleMasters on URP.RoleId equals RM.RoleID
-                join emp in dbContext.Employee on Usd.UserID equals emp.UserID into empGroup
-                from employee in empGroup.DefaultIfEmpty()
-                join hr in dbContext.HRdetails on Usd.UserID equals hr.HRId into hrGroup
-                from hrDetails in hrGroup.DefaultIfEmpty()
-                where Usd.EmailID.ToLower() == email && Usd.Password == password
-                select new Models.UserLoginDetails
+                var email = user.UserName.Trim().ToLower();
+                var password = user.Password; // Ideally hash this
+                var details_to_check = dbContext.UserDetails.Where(x => x.EmailID.Trim().ToLower() == email && x.Password == password).FirstOrDefault();
+                if (details_to_check == null)
                 {
-                    UserID = Usd.UserID,
-                    UserName = Usd.UserName,
-                    EmailID = Usd.EmailID,
-                    Password = Usd.Password,
-                    MobileNumber = Usd.MobileNumber,
-                    Created_On = Usd.Created_On,
-                    Updated_On = Usd.Updated_On,
-                    roleId = RM.RoleID,
-                    roleName = RM.Role,
-                    IdbyUserRole = RM.RoleID == 4 ? employee.EmployeeID :
-                                   RM.RoleID == 3 ? hrDetails.HRId :
-                                   null
+                    return "401";
                 }
-            ).FirstOrDefaultAsync();
+                var userDetails = await (
+                    from Usd in dbContext.UserDetails.AsNoTracking()
+                    join URP in dbContext.UserRoleMapping on Usd.UserID.ToString() equals URP.UserName
+                    join RM in dbContext.RoleMasters on URP.RoleId equals RM.RoleID
+                    join emp in dbContext.Employee on Usd.UserID equals emp.UserID into empGroup
+                    from employee in empGroup.DefaultIfEmpty()
+                    join hr in dbContext.HRdetails on Usd.UserID equals hr.HRId into hrGroup
+                    from hrDetails in hrGroup.DefaultIfEmpty()
+                    where Usd.EmailID.ToLower() == email && Usd.Password == password
+                    select new Models.UserLoginDetails
+                    {
+                        UserID = Usd.UserID,
+                        UserName = Usd.UserName,
+                        EmailID = Usd.EmailID,
+                        Password = Usd.Password,
+                        MobileNumber = Usd.MobileNumber,
+                        Created_On = Usd.Created_On,
+                        Updated_On = Usd.Updated_On,
+                        roleId = RM.RoleID,
+                        roleName = RM.Role,
+                        IdbyUserRole = RM.RoleID == 4 ? employee.EmployeeID :
+                                       RM.RoleID == 3 ? hrDetails.HRId :
+                                       null
+                    }
+                ).FirstOrDefaultAsync();
 
-            if (userDetails == null)
-                return "401";
+                if (userDetails == null)
+                    return "401";
 
-            return GenerateJwtToken(
-                userDetails.roleId.ToString(),
-                userDetails.roleName,
-                userDetails.UserName,
-                userDetails.EmailID,
-                userDetails.IdbyUserRole
-            );
+                return GenerateJwtToken(
+                    userDetails.roleId.ToString(),
+                    userDetails.roleName,
+                    userDetails.UserName,
+                    userDetails.EmailID,
+                    userDetails.IdbyUserRole
+                );
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
 

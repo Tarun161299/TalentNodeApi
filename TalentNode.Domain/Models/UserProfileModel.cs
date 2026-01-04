@@ -19,6 +19,7 @@ namespace TalentNode.Domain.Models
         public string CurrentPosition { get; set; }
         public string CurrentSallary { get; set; }
         public string ExpectedSallary { get; set; }
+        public string NoticePeriod { get; set; }
         public int ResumeID { get; set; }
         public int EmpImageID { get; set; }
     }

@@ -47,6 +47,7 @@ namespace TalentNode.Infrastructure.Repositories
             employee.Experience = employee.Experience; // not updating
             employee.Email = employee.Email; // not updating
             employee.Phone = employee.Phone; // not updating
+            employee.NoticePeriod = model.NoticePeriod;
             employee.WorkingLocation = model.Location ?? employee.WorkingLocation; // map to company if stored there
             employee.Professional_Summary = model.Bio ?? employee.Professional_Summary;
             dbContext.Employee.Update(employee);
@@ -504,6 +505,7 @@ public async Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity)
                 LastName = employee.LastName ?? "",
                 Email = employee.Email ?? "",
                 Phone = employee.Phone ?? "",
+                NoticePeriod=employee.NoticePeriod ?? "",
                 CurrentPosition = employee.CurrentPosition ?? "",
                 CurrentCompany = employee.WorkingLocation ?? "",
                 ExpectedSalary = decimal.TryParse(employee.ExpectedSalary ?? "0", out var sal) ? sal : 0,
@@ -600,6 +602,7 @@ public async Task<int> AddProjectsAsync(List<ProjectAdd> projectEntity)
                 var userProfile = new ApplicantProfile
                 {
                     Id = employee.EmployeeID,
+                    NoticePeriod = employee.NoticePeriod ?? "",
                     FirstName = employee.FirstName ?? "",
                     LastName = employee.LastName ?? "",
                     Email = employee.Email ?? "",

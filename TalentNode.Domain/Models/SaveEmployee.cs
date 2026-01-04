@@ -19,6 +19,8 @@ namespace TalentNode.Domain.Models
             public string Email { get; set; }
             public string Phone { get; set; }
 
+            public string? NoticePeriod { get; set; }
+
             public string Location { get; set; }
 
             public int State { get; set; }

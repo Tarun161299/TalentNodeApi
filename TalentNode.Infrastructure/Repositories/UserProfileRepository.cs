@@ -26,6 +26,7 @@ namespace TalentNode.Infrastructure.Repositories
             Employee.CurrentPosition = userProfile.CurrentPosition;
             Employee.CurrentSalary = userProfile.CurrentSallary;
             Employee.ExpectedSalary = userProfile.ExpectedSallary;
+            Employee.NoticePeriod = userProfile.NoticePeriod;
 
             
 

@@ -32,7 +32,7 @@ namespace TalentNode.Domain.Models
 
             public string CurrentSalary { get; set; }
             public decimal ExpectedSalary { get; set; }
-            public int NoticePeriod { get; set; }
+            public string? NoticePeriod { get; set; }
 
             // Media
             public string Avatar { get; set; }
@@ -57,6 +57,8 @@ namespace TalentNode.Domain.Models
         {
             public int Id { get; set; }
 
+            public string? NoticePeriod { get; set; }
+
             // Basic Info
             public string FirstName { get; set; }
             public string LastName { get; set; }
@@ -74,7 +76,6 @@ namespace TalentNode.Domain.Models
 
             public string CurrentSalary { get; set; }
             public decimal ExpectedSalary { get; set; }
-            public int NoticePeriod { get; set; }
 
             // Media
             public string Avatar { get; set; }
